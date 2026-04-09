@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre Création — BK Pochette Congo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+      !function(f,b,e,v,n,t,s)
+      {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src=v;s=b.document.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)}(window, document,'script',
+      'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', 'VOTRE_ID_PIXEL'); 
+      fbq('track', 'PageView');
+    </script>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --whatsapp: #25D366;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border: #e2e8f0;
+            --error: #ef4444;
+            --radius: 24px;
+            --radius-sm: 14px;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(-45deg, #f8fafc, #eff6ff, #fffbeb, #f1f5f9);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .input-error { border-color: var(--error) !important; background-color: #fef2f2 !important; }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px 25px;
+            border-radius: var(--radius);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header { text-align: center; margin-bottom: 35px; }
+        .header .logo-img { max-width: 180px; height: auto; margin-bottom: 20px; display: inline-block; }
+        .header h1 { font-size: 24px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 10px; }
+        .header p { font-size: 15px; color: var(--text-sub); }
+
+        .form-step { margin-bottom: 30px; }
+        .step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+        .step-number { display: flex; justify-content: center; align-items: center; width: 32px; height: 32px; background: #f1f5f9; color: var(--text-sub); border-radius: 50%; font-weight: 800; font-size: 13px; }
+        .form-step.active .step-number { background: var(--primary); color: white; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.25); }
+
+        #step2, #step3 { display: none; opacity: 0; max-height: 0; }
+        .section-reveal { display: block !important; animation: sectionFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes sectionFadeIn { from { opacity: 0; max-height: 0; transform: scale(0.98); } to { opacity: 1; max-height: 1200px; transform: scale(1); } }
+
+        .form-group { margin-bottom: 20px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        label { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; color: var(--text-sub); }
+        
+        input, select { width: 100%; padding: 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; background: #fcfdfe; transition: 0.3s; }
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08); }
+
+        .info-delivery { background: #eff6ff; border: 1px solid #dbeafe; padding: 15px; border-radius: var(--radius-sm); margin-bottom: 20px; font-size: 13px; color: var(--primary); display: none; text-align: center; }
+
+        #summaryBox { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); padding: 25px; border-radius: var(--radius-sm); border: 1px solid rgba(37, 99, 235, 0.1); margin-bottom: 25px; text-align: center; }
+        .price-tag { font-size: 36px; font-weight: 800; color: var(--primary); margin-top: 5px; }
+
+        .file-upload-wrapper { position: relative; border: 2px dashed var(--border); border-radius: var(--radius-sm); padding: 25px; text-align: center; background: #f8fafc; cursor: pointer; transition: 0.3s; }
+        #fileNameDisplay.file-added { color: #059669 !important; font-weight: 700; }
+        .file-upload-wrapper input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
+
+        .btn-whatsapp { width: 100%; background-color: var(--whatsapp); color: white; border: none; padding: 20px; border-radius: var(--radius-sm); font-size: 16px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 20px -5px rgba(37, 211, 102, 0.3); position: relative; overflow: hidden; }
+        .btn-whatsapp::after { content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%; background: rgba(255, 255, 255, 0.25); transform: rotate(30deg); animation: shine 4s infinite; }
+        @keyframes shine { 0% { left: -60%; } 15% { left: 120%; } 100% { left: 120%; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="logoBKVECT2.png" alt="BK Pochette Congo" class="logo-img">
+        <h1>Sublimez votre Smartphone</h1>
+        <p>Une création unique, conçue pour vous.</p>
+    </div>
+
+    <form id="act1Form">
+        <div class="form-step active" id="step1Container">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">Faisons connaissance</div>
+            </div>
+            <div class="step-content">
+                <div class="form-group">
+                    <label>Votre Nom Complet</label>
+                    <input type="text" id="clientName" placeholder="Comment devons-nous vous appeler ?" required oninput="this.classList.remove('input-error')">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Votre Marque</label>
+                        <select id="phoneBrand" onchange="verifierNomAvantModele()" required>
+                            <option value="">-- Choisir --</option>
+                            <option value="Apple">Apple</option>
+                            <option value="Samsung">Samsung</option>
+                            <option value="Tecno">Tecno</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Votre Modèle</label>
+                        <select id="phoneModel" onchange="revelerEtape2()" disabled required>
+                            <option value="">-- Précisez --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-step" id="step2">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">Votre Création & Quantité</div>
+            </div>
+            <div class="step-content">
+                <div class="form-group">
+                    <label>Nombre de pièces souhaitées</label>
+                    <input type="number" id="orderQty" value="1" min="1" oninput="mettreAJourPrix()" required>
+                </div>
+                <div id="summaryBox">
+                    <p style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-sub); letter-spacing: 1.5px;">Estimation de votre commande</p>
+                    <div id="summaryText" style="font-weight: 700; font-size: 17px; margin-top: 8px;"></div>
+                    <div class="price-tag"><span id="totalPrice">0</span> $</div>
+                    <div id="unitInfo" style="font-size: 12px; color: var(--text-sub); margin-top: 4px; font-style: italic;"></div>
+                </div>
+                <div class="form-group">
+                    <label>Votre plus belle photo</label>
+                    <div class="file-upload-wrapper" id="uploadWrapper">
+                        <span id="fileNameDisplay" style="font-size: 13px; color: var(--text-sub);">📸 Cliquez ici pour joindre votre image</span>
+                        <input type="file" id="clientPhoto" accept="image/*" onchange="revelerEtape3()" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-step" id="step3">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-title">Adresse & Livraison</div>
+            </div>
+            <div class="step-content">
+                <div class="form-group">
+                    <label>Contact WhatsApp</label>
+                    <input type="tel" id="clientTel" value="+243 " required oninput="validerTelephone(this)">
+                </div>
+                <div class="form-group">
+                    <label>Ville de Livraison</label>
+                    <select id="clientVille" onchange="chargerCommunes();" required>
+                        <option value="">-- Sélectionner la ville --</option>
+                        <option value="Kinshasa">Kinshasa</option>
+                        <option value="Lubumbashi">Lubumbashi</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Commune</label>
+                    <select id="clientCommune" disabled onchange="mettreAJourFraisLivraison(); this.classList.remove('input-error')" required>
+                        <option value="">-- Choisir la ville d'abord --</option>
+                    </select>
+                </div>
+                <div id="deliveryInfoBox" class="info-delivery"></div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Avenue</label><input type="text" id="clientAvenue" placeholder="Ex: Av. de la Paix" required oninput="this.classList.remove('input-error')">
+                    </div>
+                    <div class="form-group">
+                        <label>N° Maison</label><input type="text" id="clientNum" placeholder="Ex: 12 bis" required oninput="this.classList.remove('input-error')">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Référence / Arrêt (Facultatif)</label><input type="text" id="clientArret" placeholder="Ex: Près de l'église">
+                </div>
+                <div class="cta-zone">
+                    <button type="button" class="btn-whatsapp" onclick="envoyerCommande()">
+                        <span>Transmettre ma Photo & Commander</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+    const baseDonneesModeles = {
+        "Apple": [
+            "iPhone 17 Pro Max", "iPhone 17 Pro", "iPhone 17 Air", "iPhone 17",
+            "iPhone 16 Pro Max", "iPhone 16 Pro", "iPhone 16 Plus", "iPhone 16", "iPhone 16e",
+            "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
+            "iPhone 14 Pro Max", "iPhone 14 Pro", "iPhone 14 Plus", "iPhone 14",
+            "iPhone 13 Pro Max", "iPhone 13 Pro", "iPhone 13", "iPhone 13 mini",
+            "iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12", "iPhone 12 mini",
+            "iPhone 11 Pro Max", "iPhone 11 Pro", "iPhone 11",
+            "iPhone XS Max", "iPhone XS", "iPhone XR", "iPhone X",
+            "iPhone 8 Plus", "iPhone 8", "iPhone SE (3e génération)", "iPhone SE (2e génération)"
+        ],
+        "Samsung": [
+            "Galaxy S26 Ultra", "Galaxy S26+", "Galaxy S26",
+            "Galaxy S25 Ultra", "Galaxy S25+", "Galaxy S25 Edge", "Galaxy S25 FE", "Galaxy S25",
+            "Galaxy S24 Ultra", "Galaxy S24 FE", "Galaxy S24+", "Galaxy S24",
+            "Galaxy S23 Ultra", "Galaxy S23 FE", "Galaxy S23+", "Galaxy S23",
+            "Galaxy S22 Ultra", "Galaxy S22+", "Galaxy S22",
+            "Galaxy S21 Ultra", "Galaxy S21 FE", "Galaxy S21+", "Galaxy S21",
+            "Galaxy S20 Ultra", "Galaxy S20 FE", "Galaxy S20+", "Galaxy S20",
+            "Galaxy S10+", "Galaxy S10 Lite", "Galaxy S10 5G", "Galaxy S10", "Galaxy S10e",
+            "Galaxy Z Fold 8", "Galaxy Z Fold 7 Ultra", "Galaxy Z Fold 7", "Galaxy Z Fold 6", "Galaxy Z Fold 5", "Galaxy Z Fold 4", "Galaxy Z Fold 3", "Galaxy Z Fold 2", "Galaxy Fold",
+            "Galaxy Z Flip 8", "Galaxy Z Flip 7", "Galaxy Z Flip 6", "Galaxy Z Flip 5", "Galaxy Z Flip 4", "Galaxy Z Flip 3", "Galaxy Z Flip 5G", "Galaxy Z Flip",
+            "Galaxy Note 20 Ultra", "Galaxy Note 20", "Galaxy Note 10+", "Galaxy Note 10 Lite", "Galaxy Note 10",
+            "Galaxy A56 5G", "Galaxy A55 5G", "Galaxy A54 5G", "Galaxy A53 5G", "Galaxy A52s 5G", "Galaxy A52 5G", "Galaxy A52", "Galaxy A51", "Galaxy A50s", "Galaxy A50",
+            "Galaxy A35 5G", "Galaxy A34 5G", "Galaxy A33 5G", "Galaxy A32", "Galaxy A31", "Galaxy A30s", "Galaxy A30",
+            "Galaxy A17", "Galaxy A16", "Galaxy A15", "Galaxy A14", "Galaxy A13", "Galaxy A12"
+        ],
+        "Tecno": ["Camon 30 Premier", "Camon 30", "Camon 20 Pro", "Camon 20"]
+    };
+
+    const baseCommunes = {
+        "Kinshasa": ["Bandalungwa", "Barumbu", "Bumbu", "Gombe", "Kalamu", "Kasa-Vubu", "Kimbanseke", "Kinshasa", "Kintambo", "Kisenso", "Lemba", "Limete", "Lingwala", "Makala", "Maluku", "Masina", "Matete", "Mont-Ngafula", "Ndjili", "Ngaba", "Ngaliema", "Ngiri-Ngiri", "Nsele", "Selembao"],
+        "Lubumbashi": ["Annexe", "Kampemba", "Katuba", "Kenya", "Lubumbashi", "Ruashi"]
+    };
+
+    function verifierNomAvantModele() {
+        const nom = document.getElementById('clientName');
+        if (!nom.value.trim()) { nom.classList.add('input-error'); document.getElementById('phoneBrand').value = ""; alert("Veuillez d'abord saisir votre nom."); return; }
+        nom.classList.remove('input-error'); chargerModeles();
+    }
+
+    function validerTelephone(input) {
+        if (!input.value.startsWith('+243 ')) input.value = '+243 ';
+        let suffixe = input.value.substring(5).replace(/\D/g, '');
+        if (suffixe.length > 9) suffixe = suffixe.substring(0, 9);
+        input.value = '+243 ' + suffixe;
+    }
+
+    function chargerModeles() {
+        const marque = document.getElementById('phoneBrand').value;
+        const mSelect = document.getElementById('phoneModel');
+        mSelect.innerHTML = '<option value="">-- Votre modèle --</option>';
+        if (marque) {
+            mSelect.disabled = false;
+            baseDonneesModeles[marque].forEach(m => {
+                let opt = document.createElement('option'); opt.value = m; opt.textContent = m;
+                mSelect.appendChild(opt);
+            });
+        } else { mSelect.disabled = true; }
+    }
+
+    function chargerCommunes() {
+        const ville = document.getElementById('clientVille').value;
+        const commSelect = document.getElementById('clientCommune');
+        const box = document.getElementById('deliveryInfoBox');
+        box.style.display = "none";
+        commSelect.innerHTML = '<option value="">-- Sélectionner la commune --</option>';
+        if (ville) {
+            commSelect.disabled = false;
+            baseCommunes[ville].forEach(c => {
+                let opt = document.createElement('option'); opt.value = c; opt.textContent = c;
+                commSelect.appendChild(opt);
+            });
+            if (ville === "Lubumbashi") {
+                box.style.display = "block";
+                box.innerHTML = "✈️ <b>Expédition :</b> +5$ fixes pour Lubumbashi";
+            }
+        } else { commSelect.disabled = true; }
+    }
+
+    function mettreAJourFraisLivraison() {
+        const ville = document.getElementById('clientVille').value;
+        const commune = document.getElementById('clientCommune').value;
+        const box = document.getElementById('deliveryInfoBox');
+        if (ville === "Kinshasa" && commune) {
+            box.style.display = "block";
+            box.innerHTML = (commune === "Nsele") ? "🚛 <b>Livraison :</b> 10.000 FC" : "🚛 <b>Livraison :</b> 8.000 FC";
+        }
+    }
+
+    function mettreAJourPrix() {
+        const marque = document.getElementById('phoneBrand').value;
+        const modele = document.getElementById('phoneModel').value;
+        const qte = parseInt(document.getElementById('orderQty').value) || 1;
+        
+        if (marque && modele) {
+            let unitPrice = 15; // Prix Standard
+
+            // LOGIQUE TARIFAIRE
+            if (marque === "Apple") {
+                if (modele.includes("iPhone 17") || modele.includes("iPhone 16")) {
+                    unitPrice = 18; // Premium iPhone
+                } else if (modele.includes("iPhone 11") || modele === "iPhone X" || modele === "iPhone XR" || modele === "iPhone XS" || modele === "iPhone XS Max") {
+                    unitPrice = 10; // Promo iPhone
+                }
+            } else if (marque === "Samsung") {
+                if (modele.includes("S25") || modele.includes("S26") || modele.includes("Fold") || modele.includes("Flip")) {
+                    unitPrice = 18; // Premium Samsung
+                }
+            }
+
+            const total = unitPrice * qte;
+            document.getElementById('summaryText').textContent = `${qte} x ${marque} ${modele}`;
+            document.getElementById('totalPrice').textContent = total;
+            document.getElementById('unitInfo').textContent = `(${unitPrice}$ par unité)`;
+        }
+    }
+
+    function revelerEtape2() {
+        const m = document.getElementById('phoneModel').value;
+        if (m) { document.getElementById('step2').classList.add('section-reveal'); mettreAJourPrix(); }
+    }
+
+    function revelerEtape3() {
+        const f = document.getElementById('clientPhoto').files[0];
+        if (f) {
+            document.getElementById('fileNameDisplay').textContent = "✅ Image ajoutée";
+            document.getElementById('fileNameDisplay').classList.add('file-added');
+            document.getElementById('step3').classList.add('section-reveal');
+        }
+    }
+
+    function envoyerCommande() {
+        const ids = ['clientName', 'phoneBrand', 'phoneModel', 'orderQty', 'clientTel', 'clientVille', 'clientCommune', 'clientAvenue', 'clientNum'];
+        let erreur = false;
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el.value || (id === 'clientTel' && el.value.length < 14)) { el.classList.add('input-error'); erreur = true; }
+        });
+        
+        if (erreur) { alert("Veuillez remplir les informations signalées."); return; }
+        
+        const ville = document.getElementById('clientVille').value;
+        const numWhatsApp = (ville === "Lubumbashi") ? "243812044115" : "243901810416";
+        const commune = document.getElementById('clientCommune').value;
+        const frais = (ville === "Kinshasa") ? (commune === "Nsele" ? "10.000 FC" : "8.000 FC") : "+5$";
+
+        const msg = `*COMMANDE BK POCHETTE*%0A%0A👤 *Client :* ${document.getElementById('clientName').value}%0A📦 *Commande :* ${document.getElementById('orderQty').value} x ${document.getElementById('phoneBrand').value} ${document.getElementById('phoneModel').value}%0A💰 *TOTAL :* ${document.getElementById('totalPrice').textContent} $%0A📍 *VILLE :* ${ville}%0A🚛 *FRAIS :* ${frais}%0A🏠 *ADRESSE :* ${commune}, ${document.getElementById('clientAvenue').value}, N°${document.getElementById('clientNum').value}%0A📞 *WhatsApp :* ${document.getElementById('clientTel').value}`;
+        window.open(`https://wa.me/${numWhatsApp}?text=${msg}`, '_blank');
+    }
+</script>
+</body>
+</html>

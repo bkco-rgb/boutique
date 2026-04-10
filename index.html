@@ -363,14 +363,16 @@
         
         if (erreur) { alert("Veuillez remplir les informations signalées."); return; }
 
-        // --- AJOUT DU TRACKING META ICI ---
+        // --- 1. AFFICHER LE MESSAGE EN BAS ---
+        document.getElementById('statutEnvoi').style.display = 'block';
+        
+        // --- 2. AJOUTER LE TRACKING META ---
         fbq('track', 'Contact', {
             content_name: 'Commande WhatsApp BK',
             content_category: document.getElementById('phoneBrand').value,
             value: document.getElementById('totalPrice').textContent,
             currency: 'USD'
         });
-        // ----------------------------------
         
         const ville = document.getElementById('clientVille').value;
         const numWhatsApp = (ville === "Lubumbashi") ? "243812044115" : "243901810416";

@@ -11,7 +11,14 @@ n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
+
+// 1. On allume le pixel
 fbq('init', '1472869337291314');
+
+// 2. LA LIGNE PROXY EST ICI (À AJOUTER) :
+fbq('set', 'proxy', 'https://capig.bkshop.boutique', '1472869337291314');
+
+// 3. On envoie la vue de page
 fbq('track', 'PageView');
 </script>
 <noscript><img height="1" width="1" style="display:none"

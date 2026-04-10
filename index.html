@@ -379,7 +379,7 @@
         const commune = document.getElementById('clientCommune').value;
         const frais = (ville === "Kinshasa") ? (commune === "Nsele" ? "10.000 FC" : "8.000 FC") : "+5$";
 
-        const msg = `*COMMANDE BK POCHETTE*%0A%0A👤 *Client :* ${document.getElementById('clientName').value}%0A📦 *Commande :* ${document.getElementById('orderQty').value} x ${document.getElementById('phoneBrand').value} ${document.getElementById('phoneModel').value}%0A💰 *TOTAL :* ${document.getElementById('totalPrice').textContent} $%0A📍 *VILLE :* ${ville}%0A🚛 *FRAIS :* ${frais}%0A🏠 *ADRESSE :* ${commune}, ${document.getElementById('clientAvenue').value}, N°${document.getElementById('clientNum').value}%0A📞 *WhatsApp :* ${document.getElementById('clientTel').value}`;
+        const msg = `*COMMANDE BK POCHETTE*%0A%0A👤 *Client :* ${document.getElementById('clientName').value}%0A📦 *Commande :* ${document.getElementById('orderQty').value} x ${document.getElementById('phoneBrand').value} ${document.getElementById('phoneModel').value}%0A💰 *TOTAL :* ${document.getElementById('totalPrice').textContent} $%0A📍 *VILLE :* ${ville}%0A🚛 *FRAIS :* ${frais}%0A🏠 *ADRESSE :* ${commune}, ${document.getElementById('clientAvenue').value}, N°${document.getElementById('clientNum').value}%0A📞 *WhatsApp :* ${document.getElementById('clientTel').value}%0A%0A---------------------------%0A🖼️ *Je vous joins la photo juste après ce message*`;
         
         window.open(`https://wa.me/${numWhatsApp}?text=${msg}`, '_blank');
     }

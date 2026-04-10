@@ -10,7 +10,11 @@ if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
 n.queue=[];t=b.createElement(e);t.async=!0;
 t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://capig.bkshop.boutique/en_US/fbevents.js');
+'https://connect.facebook.net/en_US/fbevents.js'); // On utilise le script officiel
+
+// C'EST CETTE LIGNE QUI FAIT LE LIEN AVEC TON DOMAINE PAYÉ
+fbq('set', 'proxy', 'https://capig.bkshop.boutique'); 
+
 fbq('init', '1472869337291314');
 fbq('track', 'PageView');
 </script>

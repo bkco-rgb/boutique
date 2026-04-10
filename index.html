@@ -353,7 +353,7 @@
         }
     }
 
-    function envoyerCommande() {
+   function envoyerCommande() {
         const ids = ['clientName', 'phoneBrand', 'phoneModel', 'orderQty', 'clientTel', 'clientVille', 'clientCommune', 'clientAvenue', 'clientNum'];
         let erreur = false;
         ids.forEach(id => {
@@ -362,6 +362,15 @@
         });
         
         if (erreur) { alert("Veuillez remplir les informations signalées."); return; }
+
+        // --- AJOUT DU TRACKING META ICI ---
+        fbq('track', 'Contact', {
+            content_name: 'Commande WhatsApp BK',
+            content_category: document.getElementById('phoneBrand').value,
+            value: document.getElementById('totalPrice').textContent,
+            currency: 'USD'
+        });
+        // ----------------------------------
         
         const ville = document.getElementById('clientVille').value;
         const numWhatsApp = (ville === "Lubumbashi") ? "243812044115" : "243901810416";
@@ -369,6 +378,7 @@
         const frais = (ville === "Kinshasa") ? (commune === "Nsele" ? "10.000 FC" : "8.000 FC") : "+5$";
 
         const msg = `*COMMANDE BK POCHETTE*%0A%0A👤 *Client :* ${document.getElementById('clientName').value}%0A📦 *Commande :* ${document.getElementById('orderQty').value} x ${document.getElementById('phoneBrand').value} ${document.getElementById('phoneModel').value}%0A💰 *TOTAL :* ${document.getElementById('totalPrice').textContent} $%0A📍 *VILLE :* ${ville}%0A🚛 *FRAIS :* ${frais}%0A🏠 *ADRESSE :* ${commune}, ${document.getElementById('clientAvenue').value}, N°${document.getElementById('clientNum').value}%0A📞 *WhatsApp :* ${document.getElementById('clientTel').value}`;
+        
         window.open(`https://wa.me/${numWhatsApp}?text=${msg}`, '_blank');
     }
 </script>

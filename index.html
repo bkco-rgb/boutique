@@ -12,18 +12,14 @@ t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
 
-// --- C'EST ICI QUE J'AI AJOUTÉ LES LIGNES ---
-
-// 1. Initialisation avec l'agent Stape (pour réduire les erreurs Meta)
+// 1. Initialisation avec l'agent pour Stape
 fbq('init', '1472869337291314', {}, { agent: 'stape-capig' });
 
-// 2. Définition de ton serveur en Belgique comme destination
-fbq('set', 'proxy', 'https://capig.bkshop.boutique');
+// 2. Correction ici : On rajoute l'ID à la fin pour enlever l'erreur "undefined"
+fbq('set', 'proxy', 'https://capig.bkshop.boutique', '1472869337291314');
 
-// 3. Lancement du tracking
+// 3. Envoi du signal
 fbq('track', 'PageView');
-
-// --------------------------------------------
 </script>
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1472869337291314&ev=PageView&noscript=1"

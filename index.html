@@ -2,21 +2,21 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-  <script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://capig.bkshop.boutique/en_US/fbevents.js');
-fbq('init', '1472869337291314');
-fbq('track', 'PageView');
-</script>
-<noscript><img height="1" width="1" style="display:none"
-src="https://www.facebook.com/tr?id=1472869337291314&ev=PageView&noscript=1"
-/></noscript>
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://capig.bkshop.boutique/en_US/fbevents.js');
+    fbq('init', '1472869337291314');
+    fbq('track', 'PageView');
+    </script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1472869337291314&ev=PageView&noscript=1"
+    /></noscript>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Votre Création — BK Pochette Congo</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -317,21 +317,18 @@ src="https://www.facebook.com/tr?id=1472869337291314&ev=PageView&noscript=1"
         const qte = parseInt(document.getElementById('orderQty').value) || 1;
         
         if (marque && modele) {
-            let unitPrice = 15; // Prix Standard
-
-            // LOGIQUE TARIFAIRE
+            let unitPrice = 15;
             if (marque === "Apple") {
                 if (modele.includes("iPhone 17") || modele.includes("iPhone 16")) {
-                    unitPrice = 18; // Premium iPhone
+                    unitPrice = 18;
                 } else if (modele.includes("iPhone 11") || modele === "iPhone X" || modele === "iPhone XR" || modele === "iPhone XS" || modele === "iPhone XS Max") {
-                    unitPrice = 10; // Promo iPhone
+                    unitPrice = 10;
                 }
             } else if (marque === "Samsung") {
                 if (modele.includes("S25") || modele.includes("S26") || modele.includes("Fold") || modele.includes("Flip")) {
-                    unitPrice = 18; // Premium Samsung
+                    unitPrice = 18;
                 }
             }
-
             const total = unitPrice * qte;
             document.getElementById('summaryText').textContent = `${qte} x ${marque} ${modele}`;
             document.getElementById('totalPrice').textContent = total;
@@ -353,39 +350,39 @@ src="https://www.facebook.com/tr?id=1472869337291314&ev=PageView&noscript=1"
         }
     }
 
-   function envoyerCommande() {
-    const ids = ['clientName', 'phoneBrand', 'phoneModel', 'orderQty', 'clientTel', 'clientVille', 'clientCommune', 'clientAvenue', 'clientNum'];
-    let erreur = false;
-    ids.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el.value || (id === 'clientTel' && el.value.length < 14)) { 
-            el.classList.add('input-error'); 
-            erreur = true; 
-        }
-    });
-    
-    if (erreur) { alert("Veuillez remplir les informations signalées."); return; }
+    function envoyerCommande() {
+        const ids = ['clientName', 'phoneBrand', 'phoneModel', 'orderQty', 'clientTel', 'clientVille', 'clientCommune', 'clientAvenue', 'clientNum'];
+        let erreur = false;
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el.value || (id === 'clientTel' && el.value.length < 14)) {
+                el.classList.add('input-error');
+                erreur = true;
+            }
+        });
 
-    // EVENT ID unique pour déduplication Pixel + CAPI
-    const eventId = 'cmd_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        if (erreur) { alert("Veuillez remplir les informations signalées."); return; }
 
-    // TRACKING META PIXEL (navigateur)
-    fbq('track', 'Contact', {
-        content_name: 'Commande WhatsApp BK',
-        content_category: document.getElementById('phoneBrand').value,
-        value: parseFloat(document.getElementById('totalPrice').textContent),
-        currency: 'USD'
-    }, { eventID: eventId });
+        // Event ID unique pour déduplication Pixel + CAPI
+        const eventId = 'cmd_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
-    const ville = document.getElementById('clientVille').value;
-    const numWhatsApp = (ville === "Lubumbashi") ? "243812044115" : "243901810416";
-    const commune = document.getElementById('clientCommune').value;
-    const frais = (ville === "Kinshasa") ? (commune === "Nsele" ? "10.000 FC" : "8.000 FC") : "+5$";
+        // Tracking Meta Pixel via Stape CAPI
+        fbq('track', 'Contact', {
+            content_name: 'Commande WhatsApp BK',
+            content_category: document.getElementById('phoneBrand').value,
+            value: parseFloat(document.getElementById('totalPrice').textContent),
+            currency: 'USD'
+        }, { eventID: eventId });
 
-    const msg = `*COMMANDE BK POCHETTE*%0A%0A👤 *Client :* ${document.getElementById('clientName').value}%0A📦 *Commande :* ${document.getElementById('orderQty').value} x ${document.getElementById('phoneBrand').value} ${document.getElementById('phoneModel').value}%0A💰 *TOTAL :* ${document.getElementById('totalPrice').textContent} $%0A📍 *VILLE :* ${ville}%0A🚛 *FRAIS :* ${frais}%0A🏠 *ADRESSE :* ${commune}, ${document.getElementById('clientAvenue').value}, N°${document.getElementById('clientNum').value}%0A📞 *WhatsApp :* ${document.getElementById('clientTel').value}`;
-    
-    window.open(`https://wa.me/${numWhatsApp}?text=${msg}`, '_blank');
-}
+        const ville = document.getElementById('clientVille').value;
+        const numWhatsApp = (ville === "Lubumbashi") ? "243812044115" : "243901810416";
+        const commune = document.getElementById('clientCommune').value;
+        const frais = (ville === "Kinshasa") ? (commune === "Nsele" ? "10.000 FC" : "8.000 FC") : "+5$";
+
+        const msg = `*COMMANDE BK POCHETTE*%0A%0A👤 *Client :* ${document.getElementById('clientName').value}%0A📦 *Commande :* ${document.getElementById('orderQty').value} x ${document.getElementById('phoneBrand').value} ${document.getElementById('phoneModel').value}%0A💰 *TOTAL :* ${document.getElementById('totalPrice').textContent} $%0A📍 *VILLE :* ${ville}%0A🚛 *FRAIS :* ${frais}%0A🏠 *ADRESSE :* ${commune}, ${document.getElementById('clientAvenue').value}, N°${document.getElementById('clientNum').value}%0A📞 *WhatsApp :* ${document.getElementById('clientTel').value}`;
+
+        window.open(`https://wa.me/${numWhatsApp}?text=${msg}`, '_blank');
+    }
 </script>
 </body>
 </html>

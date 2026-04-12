@@ -2,28 +2,28 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-   <script>
-!function(f,b,e,v,n,t,s)
-{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-n.queue=[];t=b.createElement(e);t.async=!0;
-t.src=v;s=b.getElementsByTagName(e)[0];
-s.parentNode.insertBefore(t,s)}(window, document,'script',
-'https://connect.facebook.net/en_US/fbevents.js');
+    <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    // Note : Une fois le 404 réglé par Stape, remplace 'v' ci-dessous par 'https://capig.bkshop.boutique/en_US/fbevents.js'
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
 
-// 1. Initialisation avec l'agent pour Stape
-fbq('init', '1472869337291314', {}, { agent: 'stape-capig' });
+    // Initialisation optimisée pour Stape
+    fbq('init', '1472869337291314', {}, { agent: 'stape-capig' });
+    fbq('set', 'proxy', 'https://capig.bkshop.boutique', '1472869337291314');
 
-// 2. Correction ici : On rajoute l'ID à la fin pour enlever l'erreur "undefined"
-fbq('set', 'proxy', 'https://capig.bkshop.boutique', '1472869337291314');
-
-// 3. Envoi du signal
-fbq('track', 'PageView');
-</script>
+    // Premier signal PageView
+    fbq('track', 'PageView');
+    </script>
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1472869337291314&ev=PageView&noscript=1"
     /></noscript>
+
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Votre Création — BK Pochette Congo</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -370,12 +370,12 @@ fbq('track', 'PageView');
 
         if (erreur) { alert("Veuillez remplir les informations signalées."); return; }
 
-        // Event ID unique pour déduplication Pixel + CAPI
-        const eventId = 'cmd_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        // Génération de l'Event ID pour la déduplication Pixel + CAPI
+        const eventId = 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
-        // Tracking Meta Pixel via Stape CAPI
+        // Tracking Meta (Pixel + Stape)
         fbq('track', 'Contact', {
-            content_name: 'Commande WhatsApp BK',
+            content_name: 'Personnalisation Pochette',
             content_category: document.getElementById('phoneBrand').value,
             value: parseFloat(document.getElementById('totalPrice').textContent),
             currency: 'USD'

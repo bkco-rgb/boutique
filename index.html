@@ -13,11 +13,10 @@
     s.parentNode.insertBefore(t,s)}(window, document,'script',
     'https://connect.facebook.net/en_US/fbevents.js');
 
-    // Initialisation optimisée pour Stape
+    // Initialisation avec agent Stape pour contourner les bloqueurs
     fbq('init', '1472869337291314', {}, { agent: 'stape-capig' });
     fbq('set', 'proxy', 'https://capig.bkshop.boutique', '1472869337291314');
 
-    // Premier signal PageView
     fbq('track', 'PageView');
     </script>
     <noscript><img height="1" width="1" style="display:none"
@@ -227,6 +226,7 @@
 </div>
 
 <script>
+    // BASE DE DONNÉES PRODUITS
     const baseDonneesModeles = {
         "Apple": [
             "iPhone 17 Pro Max", "iPhone 17 Pro", "iPhone 17 Air", "iPhone 17",
@@ -263,6 +263,7 @@
         "Lubumbashi": ["Annexe", "Kampemba", "Katuba", "Kenya", "Lubumbashi", "Ruashi"]
     };
 
+    // LOGIQUE D'INTERFACE
     function verifierNomAvantModele() {
         const nom = document.getElementById('clientName');
         if (!nom.value.trim()) { nom.classList.add('input-error'); document.getElementById('phoneBrand').value = ""; alert("Veuillez d'abord saisir votre nom."); return; }
@@ -328,7 +329,7 @@
             if (marque === "Apple") {
                 if (modele.includes("iPhone 17") || modele.includes("iPhone 16")) {
                     unitPrice = 18;
-                } else if (modele.includes("iPhone 11") || modele === "iPhone X" || modele === "iPhone XR" || modele === "iPhone XS" || modele === "iPhone XS Max") {
+                } else if (modele.includes("iPhone 11") || modele.includes("iPhone X")) {
                     unitPrice = 10;
                 }
             } else if (marque === "Samsung") {
@@ -357,6 +358,7 @@
         }
     }
 
+    // LOGIQUE D'ENVOI ET TRACKING
     function envoyerCommande() {
         const ids = ['clientName', 'phoneBrand', 'phoneModel', 'orderQty', 'clientTel', 'clientVille', 'clientCommune', 'clientAvenue', 'clientNum'];
         let erreur = false;
@@ -368,19 +370,20 @@
             }
         });
 
-        if (erreur) { alert("Veuillez remplir les informations signalées."); return; }
+        if (erreur) { alert("Oups ! Veuillez remplir les informations en rouge pour finaliser."); return; }
 
-        // Génération de l'Event ID pour la déduplication Pixel + CAPI
+        // GÉNÉRATION DE L'EVENT ID (Unique pour déduplication Pixel + CAPI)
         const eventId = 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
-        // Tracking Meta (Pixel + Stape)
+        // TRACKING META PIXEL + CAPI STAPE
         fbq('track', 'Contact', {
-            content_name: 'Personnalisation Pochette',
+            content_name: 'Commande Pochette Photo',
             content_category: document.getElementById('phoneBrand').value,
             value: parseFloat(document.getElementById('totalPrice').textContent),
             currency: 'USD'
         }, { eventID: eventId });
 
+        // PRÉPARATION DU MESSAGE WHATSAPP
         const ville = document.getElementById('clientVille').value;
         const numWhatsApp = (ville === "Lubumbashi") ? "243812044115" : "243901810416";
         const commune = document.getElementById('clientCommune').value;

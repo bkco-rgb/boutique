@@ -11,16 +11,11 @@
 n.callMethod.apply(n,arguments):n.queue.push(arguments)};
 if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
 n.queue=[];t=b.createElement(e);t.async=!0;
-// Ici, on remplace 'v' par ton domaine Stape personnalisé
-t.src='https://capig.bkshop.boutique/en_US/fbevents.js';
-s=b.getElementsByTagName(e)[0];
+t.src=v;s=b.getElementsByTagName(e)[0];
 s.parentNode.insertBefore(t,s)}(window, document,'script',
 'https://connect.facebook.net/en_US/fbevents.js');
 
-// Initialisation avec l'ID du Pixel et l'agent Stape
-fbq('init', '1472869337291314', {}, { agent: 'stape-capig' });
-fbq('set', 'proxy', 'https://capig.bkshop.boutique', '1472869337291314');
-
+fbq('init', '1472869337291314');
 fbq('track', 'PageView');
 </script>
     <noscript><img height="1" width="1" style="display:none"
@@ -378,10 +373,10 @@ fbq('track', 'PageView');
 
         if (erreur) { alert("Oups ! Veuillez remplir les informations en rouge pour finaliser."); return; }
 
-        // GÉNÉRATION DE L'EVENT ID (Unique pour déduplication Pixel + CAPI)
+        // ID unique par commande (utile si tu ajoutes l'API de Conversions plus tard)
         const eventId = 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
 
-        // TRACKING META PIXEL + CAPI STAPE
+        // TRACKING META PIXEL
         fbq('track', 'Contact', {
             content_name: 'Commande Pochette Photo',
             content_category: document.getElementById('phoneBrand').value,

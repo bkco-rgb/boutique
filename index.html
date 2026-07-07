@@ -375,14 +375,18 @@ fbq('track', 'PageView');
 
         // ID unique par commande (utile si tu ajoutes l'API de Conversions plus tard)
         const eventId = 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-
-        // TRACKING META PIXEL
-        fbq('track', 'Contact', {
+        const commandeData = {
             content_name: 'Commande Pochette Photo',
             content_category: document.getElementById('phoneBrand').value,
             value: parseFloat(document.getElementById('totalPrice').textContent),
             currency: 'USD'
-        }, { eventID: eventId });
+        };
+
+        // TRACKING META PIXEL — Contact (utile pour des campagnes Interactions / Prospects)
+        fbq('track', 'Contact', commandeData, { eventID: eventId + '_contact' });
+
+        // TRACKING META PIXEL — Purchase (nécessaire pour l'objectif Ventes)
+        fbq('track', 'Purchase', commandeData, { eventID: eventId + '_purchase' });
 
         // PRÉPARATION DU MESSAGE WHATSAPP
         const ville = document.getElementById('clientVille').value;

@@ -359,6 +359,64 @@ fbq('track', 'PageView');
         }
     }
 
+    // ==========================================================
+    // SAUVEGARDE AUTOMATIQUE DE LA PHOTO SUR GOOGLE DRIVE
+    // ==========================================================
+    // 🔧 À REMPLACER : colle ici l'URL de ton Apps Script Web App
+    // (tu l'obtiens après avoir déployé le script — voir les instructions fournies)
+    const DRIVE_UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbzC_pe7DBtNJ55edE8H8HK4-tnALc1u8heYIKIZCew2kmllnNXQt1pFnzRoGSTonfAB/exec';
+
+    // Réduit la taille de l'image avant l'envoi (largeur max 1280px, qualité 80%)
+    // -> upload plus rapide sur connexion mobile + moins d'espace pris sur Drive
+    function compresserImage(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const maxWidth = 1280;
+                    const scale = Math.min(1, maxWidth / img.width);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.8));
+                };
+                img.onerror = () => reject(new Error('Image illisible'));
+                img.src = e.target.result;
+            };
+            reader.onerror = () => reject(new Error('Lecture du fichier impossible'));
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // Envoie la photo + les infos client vers Google Drive, EN ARRIÈRE-PLAN.
+    // Ne bloque jamais l'ouverture de WhatsApp, même si ça échoue.
+    async function envoyerPhotoVersDrive(imageBase64) {
+        try {
+            await fetch(DRIVE_UPLOAD_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // évite un blocage CORS avec Apps Script
+                body: JSON.stringify({
+                    image: imageBase64,
+                    clientName: document.getElementById('clientName').value,
+                    clientTel: document.getElementById('clientTel').value,
+                    marque: document.getElementById('phoneBrand').value,
+                    modele: document.getElementById('phoneModel').value,
+                    qte: document.getElementById('orderQty').value,
+                    total: document.getElementById('totalPrice').textContent,
+                    ville: document.getElementById('clientVille').value,
+                    commune: document.getElementById('clientCommune').value,
+                    avenue: document.getElementById('clientAvenue').value,
+                    numMaison: document.getElementById('clientNum').value
+                })
+            });
+        } catch (err) {
+            // On ne bloque jamais le client pour ça — juste une trace pour toi en cas de souci répété
+            console.warn('Sauvegarde Drive échouée (la commande WhatsApp continue normalement) :', err);
+        }
+    }
+
     // LOGIQUE D'ENVOI ET TRACKING
     function envoyerCommande() {
         const ids = ['clientName', 'phoneBrand', 'phoneModel', 'orderQty', 'clientTel', 'clientVille', 'clientCommune', 'clientAvenue', 'clientNum'];
@@ -387,6 +445,14 @@ fbq('track', 'PageView');
 
         // TRACKING META PIXEL — Purchase (nécessaire pour l'objectif Ventes)
         fbq('track', 'Purchase', commandeData, { eventID: eventId + '_purchase' });
+
+        // SAUVEGARDE DE LA PHOTO SUR DRIVE — en parallèle, ne retarde jamais WhatsApp
+        const photoFile = document.getElementById('clientPhoto').files[0];
+        if (photoFile) {
+            compresserImage(photoFile)
+                .then(envoyerPhotoVersDrive)
+                .catch(err => console.warn('Compression photo échouée :', err));
+        }
 
         // PRÉPARATION DU MESSAGE WHATSAPP
         const ville = document.getElementById('clientVille').value;

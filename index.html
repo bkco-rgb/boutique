@@ -760,14 +760,14 @@ fbq('track', 'PageView');
 
     // Envoie la photo + les infos client vers Google Drive, EN ARRIÈRE-PLAN.
     // Ne bloque jamais l'ouverture de WhatsApp, même si ça échoue.
-    async function envoyerPhotoVersDrive(imageBase64, kind) {
+    async function envoyerVersDrive(imagePhotoBrute, imageCoqueComposee) {
         try {
             await fetch(DRIVE_UPLOAD_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // évite un blocage CORS avec Apps Script
                 body: JSON.stringify({
-                    image: imageBase64,
-                    imageType: kind || 'photo_brute', // 'photo_brute' ou 'coque_composee'
+                    imagePhotoBrute: imagePhotoBrute || '',
+                    imageCoqueComposee: imageCoqueComposee || '',
                     clientName: document.getElementById('clientName').value,
                     clientTel: document.getElementById('clientTel').value,
                     marque: document.getElementById('phoneBrand').value,
@@ -815,17 +815,17 @@ fbq('track', 'PageView');
         // TRACKING META PIXEL — Purchase (nécessaire pour l'objectif Ventes)
         fbq('track', 'Purchase', commandeData, { eventID: eventId + '_purchase' });
 
-        // SAUVEGARDE DE LA PHOTO SUR DRIVE — en parallèle, ne retarde jamais WhatsApp
+        // SAUVEGARDE SUR DRIVE — en parallèle, ne retarde jamais WhatsApp. Une seule requête
+        // avec les deux images (photo brute + simulation composée si disponible), pour qu'une
+        // seule ligne soit ajoutée au Sheet par commande.
         const photoFile = document.getElementById('clientPhoto').files[0];
+        const composite = composerImageFinale(); // null si pas de simulation pour ce modèle
         if (photoFile) {
             compresserImage(photoFile)
-                .then(img => envoyerPhotoVersDrive(img, 'photo_brute'))
+                .then(imgBrute => envoyerVersDrive(imgBrute, composite))
                 .catch(err => console.warn('Compression photo échouée :', err));
-        }
-        // Image composée (photo + coque, cadrée comme la cliente l'a réglée) si la simulation était disponible
-        const composite = composerImageFinale();
-        if (composite) {
-            envoyerPhotoVersDrive(composite, 'coque_composee');
+        } else if (composite) {
+            envoyerVersDrive('', composite);
         }
 
         // PRÉPARATION DU MESSAGE WHATSAPP

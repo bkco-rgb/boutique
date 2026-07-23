@@ -109,8 +109,8 @@ fbq('track', 'PageView');
 
         #simWrapper { display: none; margin-top: 16px; text-align: center; }
         .sim-hint { font-size: 12.5px; color: var(--text-sub); margin-bottom: 10px; }
-        .sim-canvas-wrap { display: inline-block; border-radius: var(--radius-sm); overflow: hidden; background: #f1f5f9; touch-action: none; }
-        #simCanvas { display: block; touch-action: none; cursor: grab; }
+        .sim-canvas-wrap { display: inline-block; border-radius: var(--radius-sm); overflow: hidden; }
+        #simCanvas { display: block; touch-action: pan-y; cursor: grab; }
         #simCanvas:active { cursor: grabbing; }
         .sim-zoom-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 0 10px; }
         .sim-zoom-row button { width: 34px; height: 34px; flex: none; border-radius: 50%; border: 1.5px solid var(--border); background: #fff; font-size: 18px; font-weight: 800; color: var(--primary); cursor: pointer; }
@@ -515,6 +515,15 @@ fbq('track', 'PageView');
         img.src = caseUrl;
     }
 
+    // Empêche de glisser la photo au point de laisser un vide dans la zone découpée :
+    // ses bords doivent toujours dépasser ou toucher les bords du trou, jamais rentrer dedans.
+    function limiterDecalage(holeW, holeH, pw, ph) {
+        const maxX = Math.max(0, (pw - holeW) / 2);
+        const maxY = Math.max(0, (ph - holeH) / 2);
+        simState.offsetX = Math.max(-maxX, Math.min(maxX, simState.offsetX));
+        simState.offsetY = Math.max(-maxY, Math.min(maxY, simState.offsetY));
+    }
+
     function dessinerSim() {
         const box = simState.box, caseImg = simState.caseImg, photo = simState.photo;
         if (!box || !caseImg || !photo) return;
@@ -536,13 +545,18 @@ fbq('track', 'PageView');
         ctx.clearRect(0, 0, cssW, cssH);
 
         const holeX = box.x * scale, holeY = box.y * scale, holeW = box.w * scale, holeH = box.h * scale;
+        const baseScale = Math.max(holeW / photo.width, holeH / photo.height);
+        const finalScale = baseScale * simState.zoom;
+        const pw = photo.width * finalScale, ph = photo.height * finalScale;
+        limiterDecalage(holeW, holeH, pw, ph);
+        // Mémorisé pour le glisser-déposer : seul un geste démarré DANS le trou doit capturer le toucher,
+        // pour que le reste du canevas laisse le défilement normal de la page fonctionner.
+        simState.holeRect = { x: holeX, y: holeY, w: holeW, h: holeH };
+
         ctx.save();
         ctx.beginPath();
         ctx.rect(holeX, holeY, holeW, holeH);
         ctx.clip();
-        const baseScale = Math.max(holeW / photo.width, holeH / photo.height);
-        const finalScale = baseScale * simState.zoom;
-        const pw = photo.width * finalScale, ph = photo.height * finalScale;
         const cx = holeX + holeW / 2 + simState.offsetX;
         const cy = holeY + holeH / 2 + simState.offsetY;
         ctx.drawImage(photo, cx - pw / 2, cy - ph / 2, pw, ph);
@@ -582,6 +596,13 @@ fbq('track', 'PageView');
         const canvas = document.getElementById('simCanvas');
         let dragStart = null;
         canvas.addEventListener('pointerdown', (e) => {
+            const hole = simState.holeRect;
+            if (!hole) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left, y = e.clientY - rect.top;
+            // En dehors de la coque : on ne capture rien, le défilement normal de la page continue.
+            if (x < hole.x || x > hole.x + hole.w || y < hole.y || y > hole.y + hole.h) return;
+            e.preventDefault();
             dragStart = { x: e.clientX, y: e.clientY, ox: simState.offsetX, oy: simState.offsetY };
             canvas.setPointerCapture(e.pointerId);
         });

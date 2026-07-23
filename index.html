@@ -541,22 +541,33 @@ fbq('track', 'PageView');
         img.src = caseUrl;
     }
 
-    // Trace un rectangle à coins arrondis — utilisé pour découper la zone photo avec de
-    // légers coins ronds (comme la vraie découpe de la coque) plutôt que des angles droits
-    // qui peuvent laisser dépasser un petit triangle de photo aux quatre coins.
-    function tracerRectArrondi(ctx, x, y, w, h, r) {
-        const rad = Math.min(r, w / 2, h / 2);
+    // Trace un rectangle avec un rayon différent par coin — utilisé pour découper la zone
+    // photo avec des coins arrondis là où c'est un simple bord de coque, mais des coins
+    // droits près d'une grosse bosse caméra (dont la forme est déjà complexe à cet endroit,
+    // un arrondi artificiel par-dessus grignoterait la photo pour rien).
+    function tracerRectCoins(ctx, x, y, w, h, rTL, rTR, rBR, rBL) {
         ctx.beginPath();
-        if (ctx.roundRect) {
-            ctx.roundRect(x, y, w, h, rad);
-        } else {
-            ctx.moveTo(x + rad, y);
-            ctx.arcTo(x + w, y, x + w, y + h, rad);
-            ctx.arcTo(x + w, y + h, x, y + h, rad);
-            ctx.arcTo(x, y + h, x, y, rad);
-            ctx.arcTo(x, y, x + w, y, rad);
-            ctx.closePath();
-        }
+        ctx.moveTo(x + rTL, y);
+        ctx.lineTo(x + w - rTR, y);
+        ctx.arcTo(x + w, y, x + w, y + rTR, rTR);
+        ctx.lineTo(x + w, y + h - rBR);
+        ctx.arcTo(x + w, y + h, x + w - rBR, y + h, rBR);
+        ctx.lineTo(x + rBL, y + h);
+        ctx.arcTo(x, y + h, x, y + h - rBL, rBL);
+        ctx.lineTo(x, y + rTL);
+        ctx.arcTo(x, y, x + rTL, y, rTL);
+        ctx.closePath();
+    }
+
+    // Calcule les 4 rayons à utiliser pour une zone photo donnée : coins bas toujours
+    // arrondis, coins hauts arrondis SEULEMENT si le haut de la zone n'est pas juste sous
+    // une grosse bosse caméra (sinon coins droits, pour ne pas grignoter la photo).
+    function rayonsCoins(box) {
+        const r = Math.min(box.w, box.h) * 0.09;
+        const topGap = box.y - box.visible.y;
+        const grosseBosse = topGap > box.h * 0.25;
+        const rTop = grosseBosse ? 0 : r;
+        return { tl: rTop, tr: rTop, br: r, bl: r };
     }
 
     // Empêche de glisser la photo au point de laisser un vide dans la zone découpée :
@@ -629,7 +640,10 @@ fbq('track', 'PageView');
         limiterDecalage(holeW, holeH, pw, ph);
 
         ctx.save();
-        tracerRectArrondi(ctx, holeX, holeY, holeW, holeH, Math.min(holeW, holeH) * 0.09);
+        {
+            const rc = rayonsCoins(box);
+            tracerRectCoins(ctx, holeX, holeY, holeW, holeH, rc.tl, rc.tr, rc.br, rc.bl);
+        }
         ctx.clip();
         const cx = holeX + holeW / 2 + simState.offsetX;
         const cy = holeY + holeH / 2 + simState.offsetY;
@@ -650,7 +664,10 @@ fbq('track', 'PageView');
         const dispScale = parseFloat(dispCanvas.style.width) / box.visible.w; // l'aperçu est recadré sur la zone visible, pas l'image entière
 
         ctx.save();
-        tracerRectArrondi(ctx, box.x, box.y, box.w, box.h, Math.min(box.w, box.h) * 0.09);
+        {
+            const rc = rayonsCoins(box);
+            tracerRectCoins(ctx, box.x, box.y, box.w, box.h, rc.tl, rc.tr, rc.br, rc.bl);
+        }
         ctx.clip();
         const baseScale = Math.max(box.w / photo.width, box.h / photo.height) * 1.03;
         const finalScale = baseScale * simState.zoom;

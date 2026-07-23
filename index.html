@@ -389,7 +389,7 @@ fbq('track', 'PageView');
     // SIMULATION VISUELLE DE LA COQUE
     // ==========================================================
     // Convention de nom de fichier : le modèle "iPhone 11 Pro Max" devient
-    // "iphone11promax.png" (tout en minuscules, sans espace ni ponctuation).
+    // "iphone11promax.webp" (tout en minuscules, sans espace ni ponctuation).
     // Les images de coques vivent au même endroit que index.html (racine du site/dépôt),
     // exactement comme ted.png — pas de sous-dossier.
     // Si le fichier n'existe pas pour un modèle, la simulation est simplement
@@ -454,7 +454,7 @@ fbq('track', 'PageView');
         const modele = document.getElementById('phoneModel').value;
         if (!modele) return;
         const slug = slugModel(modele);
-        chargerCoque(slug + '.png', slug);
+        chargerCoque(slug + '.webp', slug);
     }
 
     function lancerSimulation(fichierPhoto) {

@@ -386,7 +386,7 @@ fbq('track', 'PageView');
     }
 
     // ==========================================================
-    // SIMULATION VISUELLE AVEC DÉCOUPE SUR LES CONTOURS EXTÉRIEURS
+    // SIMULATION VISUELLE AVEC MARGE D'AJUSTEMENT (INSET)
     // ==========================================================
     function slugModel(nom) {
         return (nom || "").toLowerCase().replace(/[^a-z0-9]/g, "");
@@ -519,7 +519,6 @@ fbq('track', 'PageView');
         simState.offsetY = Math.max(-maxY, Math.min(maxY, simState.offsetY));
     }
 
-    // Tracer un rectangle à bords arrondis parfait
     function tracerCoinsArrondis(ctx, x, y, w, h, r) {
         ctx.beginPath();
         if (ctx.roundRect) {
@@ -555,14 +554,17 @@ fbq('track', 'PageView');
 
         const drawX = -vis.x * scale, drawY = -vis.y * scale, drawW = box.imgW * scale, drawH = box.imgH * scale;
 
-        // RAYON CALCULÉ SUR LES BORDS EXTÉRIEURS DE LA COQUE (13% DE LA LARGEUR EXTÉRIEURE)
-        const outerRadius = cssW * 0.13;
+        // MARGE INTERNE ET COURBURE DE SÉCURITÉ POUR ÉVITER QUELQUE DÉPASSEMENT
+        const inset = Math.round(cssW * 0.025); // 2.5% de retrait (~4-5px de sécurité sous la coque)
+        const clipW = cssW - (inset * 2);
+        const clipH = cssH - (inset * 2);
+        const outerRadius = clipW * 0.12;
 
         simState.holeRect = { x: 0, y: 0, w: cssW, h: cssH };
 
         if (!photo) {
             ctx.save();
-            tracerCoinsArrondis(ctx, 0, 0, cssW, cssH, outerRadius);
+            tracerCoinsArrondis(ctx, inset, inset, clipW, clipH, outerRadius);
             ctx.clip();
             ctx.fillStyle = '#f1f5f9';
             ctx.fillRect(0, 0, cssW, cssH);
@@ -578,23 +580,23 @@ fbq('track', 'PageView');
             return;
         }
 
-        const baseScale = Math.max(cssW / photo.width, cssH / photo.height);
+        const baseScale = Math.max(clipW / photo.width, clipH / photo.height);
         const finalScale = baseScale * simState.zoom;
         const pw = photo.width * finalScale, ph = photo.height * finalScale;
-        limiterDecalage(cssW, cssH, pw, ph);
+        limiterDecalage(clipW, clipH, pw, ph);
 
         const cx = cssW / 2 + simState.offsetX;
         const cy = cssH / 2 + simState.offsetY;
 
-        // --- DÉCOUPE SELON LE SILHOUETTE EXTÉRIEURE DE LA COQUE ---
+        // MASQUE RÉDUIT LÉGÈREMENT ENTRANT SOUS LES BORDURES DE LA COQUE
         ctx.save();
-        tracerCoinsArrondis(ctx, 0, 0, cssW, cssH, outerRadius);
-        ctx.clip(); // Découpe la photo aux contours extérieurs du téléphone
+        tracerCoinsArrondis(ctx, inset, inset, clipW, clipH, outerRadius);
+        ctx.clip();
 
         ctx.drawImage(photo, cx - pw / 2, cy - ph / 2, pw, ph);
         ctx.restore();
 
-        // Dessin de la coque PNG par-dessus la photo
+        // Dessin de la coque PNG par-dessus
         ctx.drawImage(caseImg, drawX, drawY, drawW, drawH);
     }
 
@@ -611,17 +613,20 @@ fbq('track', 'PageView');
         const dispCanvas = document.getElementById('simCanvas');
         const dispScale = parseFloat(dispCanvas.style.width) / vis.w;
 
-        const baseScale = Math.max(vis.w / photo.width, vis.h / photo.height);
+        const inset = Math.round(vis.w * 0.025);
+        const clipW = vis.w - (inset * 2);
+        const clipH = vis.h - (inset * 2);
+        const outerRadius = clipW * 0.12;
+
+        const baseScale = Math.max(clipW / photo.width, clipH / photo.height);
         const finalScale = baseScale * simState.zoom;
         const pw = photo.width * finalScale, ph = photo.height * finalScale;
         
         const cx = vis.w / 2 + simState.offsetX / dispScale;
         const cy = vis.h / 2 + simState.offsetY / dispScale;
 
-        const outerRadius = vis.w * 0.13;
-
         ctx.save();
-        tracerCoinsArrondis(ctx, 0, 0, vis.w, vis.h, outerRadius);
+        tracerCoinsArrondis(ctx, inset, inset, clipW, clipH, outerRadius);
         ctx.clip();
 
         ctx.drawImage(photo, cx - pw / 2, cy - ph / 2, pw, ph);

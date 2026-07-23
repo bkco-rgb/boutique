@@ -439,12 +439,11 @@ fbq('track', 'PageView');
     }
 
     function lancerSimulation(fichierPhoto) {
-        const marque = document.getElementById('phoneBrand').value;
         const modele = document.getElementById('phoneModel').value;
         const simWrapper = document.getElementById('simWrapper');
         const loadingEl = document.getElementById('simLoading');
         simWrapper.style.display = 'none';
-        if (marque !== 'Apple' || !modele) return; // simulation disponible pour les modèles iPhone fournis pour l'instant
+        if (!modele) return; // essaie pour n'importe quelle marque/modèle — si l'image n'existe pas encore, repli automatique sur l'upload classique
 
         const slug = slugModel(modele);
         const caseUrl = slug + '.png';

@@ -440,7 +440,23 @@ fbq('track', 'PageView');
             }
         }
         if (!trouve) return null;
-        return { x: minX, y: minY, w: maxX - minX, h: maxY - minY, imgW: w, imgH: h };
+
+        // Zone VISIBLE de la coque (coque + trou), pour recadrer l'affichage sans la marge
+        // transparente inutile autour — n'affecte jamais le fichier final envoyé pour l'impression.
+        let vMinX = w, vMaxX = 0, vMinY = h, vMaxY = 0;
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                if (!outer[y * w + x]) {
+                    if (x < vMinX) vMinX = x; if (x > vMaxX) vMaxX = x;
+                    if (y < vMinY) vMinY = y; if (y > vMaxY) vMaxY = y;
+                }
+            }
+        }
+
+        return {
+            x: minX, y: minY, w: maxX - minX, h: maxY - minY, imgW: w, imgH: h,
+            visible: { x: vMinX, y: vMinY, w: vMaxX - vMinX, h: vMaxY - vMinY }
+        };
     }
 
     // Appelée dès que le modèle est connu : tente de charger sa coque en aperçu VIDE
@@ -530,9 +546,10 @@ fbq('track', 'PageView');
         if (!box || !caseImg) return;
         const canvas = document.getElementById('simCanvas');
         const dpr = window.devicePixelRatio || 1;
-        const displayW = Math.min(320, window.innerWidth - 60);
-        const scale = displayW / box.imgW; // échelle "logique" (taille affichée à l'écran)
-        const cssW = box.imgW * scale, cssH = box.imgH * scale;
+        const vis = box.visible; // zone réellement visible de la coque, sans la marge transparente autour
+        const displayW = Math.min(230, window.innerWidth - 60);
+        const scale = displayW / vis.w; // échelle basée sur la largeur VISIBLE, pas l'image entière
+        const cssW = vis.w * scale, cssH = vis.h * scale;
 
         // Résolution interne du canevas = taille affichée × densité de l'écran (Retina/haute densité),
         // sinon le navigateur doit étirer une image trop petite -> flou. La taille AFFICHÉE ne change pas.
@@ -545,10 +562,15 @@ fbq('track', 'PageView');
         ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // le reste du dessin se fait en coordonnées "logiques" comme avant
         ctx.clearRect(0, 0, cssW, cssH);
 
-        const holeX = box.x * scale, holeY = box.y * scale, holeW = box.w * scale, holeH = box.h * scale;
+        // Le trou est repositionné relativement au coin de la zone VISIBLE (pas de l'image entière)
+        const holeX = (box.x - vis.x) * scale, holeY = (box.y - vis.y) * scale, holeW = box.w * scale, holeH = box.h * scale;
         // Mémorisé pour le glisser-déposer : seul un geste démarré DANS le trou doit capturer le toucher,
         // pour que le reste du canevas laisse le défilement normal de la page fonctionner.
         simState.holeRect = { x: holeX, y: holeY, w: holeW, h: holeH };
+
+        // La coque entière est dessinée décalée pour que sa zone visible s'aligne pile sur le canevas
+        // (recadré) — le fichier final envoyé pour impression, lui, n'est jamais recadré, uniquement l'aperçu ici.
+        const drawX = -vis.x * scale, drawY = -vis.y * scale, drawW = box.imgW * scale, drawH = box.imgH * scale;
 
         if (!photo) {
             // Aperçu vide : la coque est là, la photo n'est pas encore ajoutée — on invite le client à le faire.
@@ -566,7 +588,7 @@ fbq('track', 'PageView');
             ctx.font = '600 ' + Math.round(holeW * 0.052) + 'px "Plus Jakarta Sans", sans-serif';
             ctx.fillText('Votre photo apparaîtra ici', holeX + holeW / 2, holeY + holeH / 2 + holeW * 0.12);
             ctx.restore();
-            ctx.drawImage(caseImg, 0, 0, cssW, cssH);
+            ctx.drawImage(caseImg, drawX, drawY, drawW, drawH);
             return;
         }
 
@@ -584,7 +606,7 @@ fbq('track', 'PageView');
         ctx.drawImage(photo, cx - pw / 2, cy - ph / 2, pw, ph);
         ctx.restore();
 
-        ctx.drawImage(caseImg, 0, 0, cssW, cssH);
+        ctx.drawImage(caseImg, drawX, drawY, drawW, drawH);
     }
 
     // Génère l'image finale (photo + coque fusionnées) en pleine résolution, pour l'envoi.
@@ -595,7 +617,7 @@ fbq('track', 'PageView');
         canvas.width = box.imgW; canvas.height = box.imgH;
         const ctx = canvas.getContext('2d');
         const dispCanvas = document.getElementById('simCanvas');
-        const dispScale = parseFloat(dispCanvas.style.width) / box.imgW; // taille CSS affichée, pas la résolution interne (DPR)
+        const dispScale = parseFloat(dispCanvas.style.width) / box.visible.w; // l'aperçu est recadré sur la zone visible, pas l'image entière
 
         ctx.save();
         ctx.beginPath();

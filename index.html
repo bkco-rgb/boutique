@@ -519,12 +519,21 @@ fbq('track', 'PageView');
         const box = simState.box, caseImg = simState.caseImg, photo = simState.photo;
         if (!box || !caseImg || !photo) return;
         const canvas = document.getElementById('simCanvas');
+        const dpr = window.devicePixelRatio || 1;
         const displayW = Math.min(320, window.innerWidth - 60);
-        const scale = displayW / box.imgW;
-        canvas.width = Math.round(box.imgW * scale);
-        canvas.height = Math.round(box.imgH * scale);
+        const scale = displayW / box.imgW; // échelle "logique" (taille affichée à l'écran)
+        const cssW = box.imgW * scale, cssH = box.imgH * scale;
+
+        // Résolution interne du canevas = taille affichée × densité de l'écran (Retina/haute densité),
+        // sinon le navigateur doit étirer une image trop petite -> flou. La taille AFFICHÉE ne change pas.
+        canvas.width = Math.round(cssW * dpr);
+        canvas.height = Math.round(cssH * dpr);
+        canvas.style.width = cssW + 'px';
+        canvas.style.height = cssH + 'px';
+
         const ctx = canvas.getContext('2d');
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0); // le reste du dessin se fait en coordonnées "logiques" comme avant
+        ctx.clearRect(0, 0, cssW, cssH);
 
         const holeX = box.x * scale, holeY = box.y * scale, holeW = box.w * scale, holeH = box.h * scale;
         ctx.save();
@@ -539,7 +548,7 @@ fbq('track', 'PageView');
         ctx.drawImage(photo, cx - pw / 2, cy - ph / 2, pw, ph);
         ctx.restore();
 
-        ctx.drawImage(caseImg, 0, 0, canvas.width, canvas.height);
+        ctx.drawImage(caseImg, 0, 0, cssW, cssH);
     }
 
     // Génère l'image finale (photo + coque fusionnées) en pleine résolution, pour l'envoi.
@@ -550,7 +559,7 @@ fbq('track', 'PageView');
         canvas.width = box.imgW; canvas.height = box.imgH;
         const ctx = canvas.getContext('2d');
         const dispCanvas = document.getElementById('simCanvas');
-        const dispScale = dispCanvas.width / box.imgW;
+        const dispScale = parseFloat(dispCanvas.style.width) / box.imgW; // taille CSS affichée, pas la résolution interne (DPR)
 
         ctx.save();
         ctx.beginPath();

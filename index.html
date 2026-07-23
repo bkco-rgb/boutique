@@ -107,6 +107,16 @@ fbq('track', 'PageView');
         #fileNameDisplay.file-added { color: #059669 !important; font-weight: 700; }
         .file-upload-wrapper input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
 
+        #simWrapper { display: none; margin-top: 16px; text-align: center; }
+        .sim-hint { font-size: 12.5px; color: var(--text-sub); margin-bottom: 10px; }
+        .sim-canvas-wrap { display: inline-block; border-radius: var(--radius-sm); overflow: hidden; background: #f1f5f9; touch-action: none; }
+        #simCanvas { display: block; touch-action: none; cursor: grab; }
+        #simCanvas:active { cursor: grabbing; }
+        .sim-zoom-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 0 10px; }
+        .sim-zoom-row button { width: 34px; height: 34px; flex: none; border-radius: 50%; border: 1.5px solid var(--border); background: #fff; font-size: 18px; font-weight: 800; color: var(--primary); cursor: pointer; }
+        .sim-zoom-row input[type="range"] { flex: 1; }
+        #simLoading { font-size: 12.5px; color: var(--text-sub); margin-top: 10px; }
+
         .btn-whatsapp { width: 100%; background-color: var(--whatsapp); color: white; border: none; padding: 20px; border-radius: var(--radius-sm); font-size: 16px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 20px -5px rgba(37, 211, 102, 0.3); position: relative; overflow: hidden; }
         .btn-whatsapp::after { content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%; background: rgba(255, 255, 255, 0.25); transform: rotate(30deg); animation: shine 4s infinite; }
         @keyframes shine { 0% { left: -60%; } 15% { left: 120%; } 100% { left: 120%; } }
@@ -175,6 +185,16 @@ fbq('track', 'PageView');
                     <div class="file-upload-wrapper" id="uploadWrapper">
                         <span id="fileNameDisplay" style="font-size: 13px; color: var(--text-sub);">📸 Cliquez ici pour joindre votre image</span>
                         <input type="file" id="clientPhoto" accept="image/*" onchange="revelerEtape3()" required>
+                    </div>
+                    <div id="simWrapper">
+                        <div class="sim-hint">✨ Aperçu de votre coque — glissez la photo pour l'ajuster</div>
+                        <div class="sim-canvas-wrap"><canvas id="simCanvas"></canvas></div>
+                        <div class="sim-zoom-row">
+                            <button type="button" id="simZoomOut" aria-label="Réduire">−</button>
+                            <input type="range" id="simZoomSlider" min="100" max="300" value="100">
+                            <button type="button" id="simZoomIn" aria-label="Agrandir">+</button>
+                        </div>
+                        <div id="simLoading"></div>
                     </div>
                 </div>
             </div>
@@ -356,8 +376,231 @@ fbq('track', 'PageView');
             document.getElementById('fileNameDisplay').textContent = "✅ Image ajoutée";
             document.getElementById('fileNameDisplay').classList.add('file-added');
             document.getElementById('step3').classList.add('section-reveal');
+            lancerSimulation(f);
         }
     }
+
+    // ==========================================================
+    // SIMULATION VISUELLE DE LA COQUE
+    // ==========================================================
+    // Convention de nom de fichier : le modèle "iPhone 11 Pro Max" devient
+    // "iphone11promax.png" (tout en minuscules, sans espace ni ponctuation).
+    // Les images de coques vivent dans le dossier ./coques/ à côté de index.html.
+    // Si le fichier n'existe pas pour un modèle, la simulation est simplement
+    // ignorée et l'envoi classique de la photo continue de fonctionner normalement.
+    function slugModel(nom) {
+        return (nom || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    }
+
+    const simState = { caseImg: null, photo: null, box: null, zoom: 1, offsetX: 0, offsetY: 0, dragging: false };
+    let simDetectCache = {}; // évite de ré-analyser la même coque plusieurs fois dans la session
+
+    // Repère le "trou" transparent réservé à la photo dans une image de coque,
+    // en excluant la transparence extérieure (le fond autour de la coque elle-même).
+    function detecterZonePhoto(img) {
+        const c = document.createElement('canvas');
+        c.width = img.naturalWidth; c.height = img.naturalHeight;
+        const ctx = c.getContext('2d');
+        ctx.drawImage(img, 0, 0);
+        const w = c.width, h = c.height;
+        const data = ctx.getImageData(0, 0, w, h).data;
+        const isTransp = (x, y) => data[(y * w + x) * 4 + 3] < 20;
+
+        const outer = new Uint8Array(w * h);
+        const stack = [];
+        function visite(x, y) {
+            if (x < 0 || x >= w || y < 0 || y >= h) return;
+            const i = y * w + x;
+            if (outer[i] || !isTransp(x, y)) return;
+            outer[i] = 1; stack.push(i);
+        }
+        for (let x = 0; x < w; x++) { visite(x, 0); visite(x, h - 1); }
+        for (let y = 0; y < h; y++) { visite(0, y); visite(w - 1, y); }
+        while (stack.length) {
+            const i = stack.pop();
+            const x = i % w, y = (i / w) | 0;
+            visite(x + 1, y); visite(x - 1, y); visite(x, y + 1); visite(x, y - 1);
+        }
+
+        let minX = w, maxX = 0, minY = h, maxY = 0, trouve = false;
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                const i = y * w + x;
+                if (isTransp(x, y) && !outer[i]) {
+                    trouve = true;
+                    if (x < minX) minX = x; if (x > maxX) maxX = x;
+                    if (y < minY) minY = y; if (y > maxY) maxY = y;
+                }
+            }
+        }
+        if (!trouve) return null;
+        return { x: minX, y: minY, w: maxX - minX, h: maxY - minY, imgW: w, imgH: h };
+    }
+
+    function lancerSimulation(fichierPhoto) {
+        const marque = document.getElementById('phoneBrand').value;
+        const modele = document.getElementById('phoneModel').value;
+        const simWrapper = document.getElementById('simWrapper');
+        const loadingEl = document.getElementById('simLoading');
+        simWrapper.style.display = 'none';
+        if (marque !== 'Apple' || !modele) return; // simulation disponible pour les modèles iPhone fournis pour l'instant
+
+        const slug = slugModel(modele);
+        const caseUrl = 'coques/' + slug + '.png';
+
+        loadingEl.textContent = '';
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const photoImg = new Image();
+            photoImg.onload = () => {
+                simState.photo = photoImg;
+                chargerCoque(caseUrl, slug);
+            };
+            photoImg.src = e.target.result;
+        };
+        reader.readAsDataURL(fichierPhoto);
+    }
+
+    function chargerCoque(caseUrl, slug) {
+        const simWrapper = document.getElementById('simWrapper');
+        const loadingEl = document.getElementById('simLoading');
+
+        function afficherAvecBox(img, box) {
+            simState.caseImg = img;
+            simState.box = box;
+            simState.zoom = 1; simState.offsetX = 0; simState.offsetY = 0;
+            document.getElementById('simZoomSlider').value = 100;
+            simWrapper.style.display = 'block';
+            loadingEl.style.color = '';
+            loadingEl.textContent = '';
+            dessinerSim();
+        }
+
+        if (simDetectCache[slug]) {
+            afficherAvecBox(simDetectCache[slug].img, simDetectCache[slug].box);
+            return;
+        }
+
+        simWrapper.style.display = 'block';
+        loadingEl.style.color = '';
+        loadingEl.textContent = '⏳ Chargement de l\'aperçu…';
+
+        const img = new Image();
+        img.onload = () => {
+            try {
+                const box = detecterZonePhoto(img);
+                if (!box) {
+                    loadingEl.style.color = '#dc2626';
+                    loadingEl.textContent = "⚠️ Aucune zone transparente détectée dans " + caseUrl + " — vérifie que l'image a un vrai fond transparent (pas blanc plein).";
+                    return;
+                }
+                simDetectCache[slug] = { img, box };
+                afficherAvecBox(img, box);
+            } catch (err) {
+                // Cause la plus fréquente : le site est ouvert en local (double-clic sur le fichier,
+                // adresse qui commence par file://) — le navigateur bloque alors la lecture de l'image
+                // pour raisons de sécurité. Teste depuis l'adresse en ligne (https://...) pour vérifier.
+                loadingEl.style.color = '#dc2626';
+                loadingEl.textContent = "⚠️ Aperçu impossible ici : ouvre le site en ligne (https://...), pas le fichier directement depuis ton dossier. Détail technique : " + err.message;
+                console.error('[simulation] Échec de lecture de l\'image', caseUrl, '—', err.message);
+            }
+        };
+        img.onerror = () => {
+            // Le fichier n'existe pas à ce chemin, ou le nom ne correspond pas exactement au modèle.
+            loadingEl.style.color = '#dc2626';
+            loadingEl.textContent = "⚠️ Image introuvable : " + caseUrl + " — vérifie que le dossier coques/ est bien placé à côté de index.html sur ton hébergement.";
+            console.warn('[simulation] Image introuvable :', caseUrl);
+        };
+        img.src = caseUrl;
+    }
+
+    function dessinerSim() {
+        const box = simState.box, caseImg = simState.caseImg, photo = simState.photo;
+        if (!box || !caseImg || !photo) return;
+        const canvas = document.getElementById('simCanvas');
+        const displayW = Math.min(320, window.innerWidth - 60);
+        const scale = displayW / box.imgW;
+        canvas.width = Math.round(box.imgW * scale);
+        canvas.height = Math.round(box.imgH * scale);
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const holeX = box.x * scale, holeY = box.y * scale, holeW = box.w * scale, holeH = box.h * scale;
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(holeX, holeY, holeW, holeH);
+        ctx.clip();
+        const baseScale = Math.max(holeW / photo.width, holeH / photo.height);
+        const finalScale = baseScale * simState.zoom;
+        const pw = photo.width * finalScale, ph = photo.height * finalScale;
+        const cx = holeX + holeW / 2 + simState.offsetX;
+        const cy = holeY + holeH / 2 + simState.offsetY;
+        ctx.drawImage(photo, cx - pw / 2, cy - ph / 2, pw, ph);
+        ctx.restore();
+
+        ctx.drawImage(caseImg, 0, 0, canvas.width, canvas.height);
+    }
+
+    // Génère l'image finale (photo + coque fusionnées) en pleine résolution, pour l'envoi.
+    function composerImageFinale() {
+        const box = simState.box, caseImg = simState.caseImg, photo = simState.photo;
+        if (!box || !caseImg || !photo) return null;
+        const canvas = document.createElement('canvas');
+        canvas.width = box.imgW; canvas.height = box.imgH;
+        const ctx = canvas.getContext('2d');
+        const dispCanvas = document.getElementById('simCanvas');
+        const dispScale = dispCanvas.width / box.imgW;
+
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(box.x, box.y, box.w, box.h);
+        ctx.clip();
+        const baseScale = Math.max(box.w / photo.width, box.h / photo.height);
+        const finalScale = baseScale * simState.zoom;
+        const pw = photo.width * finalScale, ph = photo.height * finalScale;
+        const cx = box.x + box.w / 2 + simState.offsetX / dispScale;
+        const cy = box.y + box.h / 2 + simState.offsetY / dispScale;
+        ctx.drawImage(photo, cx - pw / 2, cy - ph / 2, pw, ph);
+        ctx.restore();
+
+        ctx.drawImage(caseImg, 0, 0, box.imgW, box.imgH);
+        return canvas.toDataURL('image/jpeg', 0.9);
+    }
+
+    // Glisser-déposer (souris + tactile, via Pointer Events)
+    (function initSimDragZoom() {
+        const canvas = document.getElementById('simCanvas');
+        let dragStart = null;
+        canvas.addEventListener('pointerdown', (e) => {
+            dragStart = { x: e.clientX, y: e.clientY, ox: simState.offsetX, oy: simState.offsetY };
+            canvas.setPointerCapture(e.pointerId);
+        });
+        canvas.addEventListener('pointermove', (e) => {
+            if (!dragStart) return;
+            simState.offsetX = dragStart.ox + (e.clientX - dragStart.x);
+            simState.offsetY = dragStart.oy + (e.clientY - dragStart.y);
+            dessinerSim();
+        });
+        ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev =>
+            canvas.addEventListener(ev, () => { dragStart = null; }));
+
+        document.getElementById('simZoomSlider').addEventListener('input', (e) => {
+            simState.zoom = parseInt(e.target.value, 10) / 100;
+            dessinerSim();
+        });
+        document.getElementById('simZoomOut').addEventListener('click', () => {
+            const s = document.getElementById('simZoomSlider');
+            s.value = Math.max(100, parseInt(s.value, 10) - 20);
+            simState.zoom = parseInt(s.value, 10) / 100;
+            dessinerSim();
+        });
+        document.getElementById('simZoomIn').addEventListener('click', () => {
+            const s = document.getElementById('simZoomSlider');
+            s.value = Math.min(300, parseInt(s.value, 10) + 20);
+            simState.zoom = parseInt(s.value, 10) / 100;
+            dessinerSim();
+        });
+    })();
 
     // ==========================================================
     // SAUVEGARDE AUTOMATIQUE DE LA PHOTO SUR GOOGLE DRIVE
@@ -392,13 +635,14 @@ fbq('track', 'PageView');
 
     // Envoie la photo + les infos client vers Google Drive, EN ARRIÈRE-PLAN.
     // Ne bloque jamais l'ouverture de WhatsApp, même si ça échoue.
-    async function envoyerPhotoVersDrive(imageBase64) {
+    async function envoyerPhotoVersDrive(imageBase64, kind) {
         try {
             await fetch(DRIVE_UPLOAD_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // évite un blocage CORS avec Apps Script
                 body: JSON.stringify({
                     image: imageBase64,
+                    imageType: kind || 'photo_brute', // 'photo_brute' ou 'coque_composee'
                     clientName: document.getElementById('clientName').value,
                     clientTel: document.getElementById('clientTel').value,
                     marque: document.getElementById('phoneBrand').value,
@@ -450,13 +694,19 @@ fbq('track', 'PageView');
         const photoFile = document.getElementById('clientPhoto').files[0];
         if (photoFile) {
             compresserImage(photoFile)
-                .then(envoyerPhotoVersDrive)
+                .then(img => envoyerPhotoVersDrive(img, 'photo_brute'))
                 .catch(err => console.warn('Compression photo échouée :', err));
+        }
+        // Image composée (photo + coque, cadrée comme la cliente l'a réglée) si la simulation était disponible
+        const composite = composerImageFinale();
+        if (composite) {
+            envoyerPhotoVersDrive(composite, 'coque_composee');
         }
 
         // PRÉPARATION DU MESSAGE WHATSAPP
         const ville = document.getElementById('clientVille').value;
-        const numWhatsApp = (ville === "Lubumbashi") ? "243812044115" : "243901810416";
+        // Numéro unique pour Kinshasa ET Lubumbashi (ancien numéro Kinshasa 901810416 indisponible)
+        const numWhatsApp = "243812044115";
         const commune = document.getElementById('clientCommune').value;
         const frais = (ville === "Kinshasa") ? (commune === "Nsele" ? "10.000 FC" : "8.000 FC") : "+5$";
 

@@ -1,17 +1,4 @@
-J'ai compris d'où vient exactement le problème !
-
-Dans ton code d'origine, le Canvas utilisait un découpage rectangulaire classique (`ctx.rect`), c'est-à-dire avec **4 angles droits à 90°**. Comme la coque de téléphone a des angles arrrondis, les 4 coins carrés de la photo ressortaient inévitablement derrière la coque.
-
-### 💡 La Solution Garantie
-
-Au lieu de faire un rectangle carré, on utilise un **découpage à bords arrondis dynamique (`roundRect`)** avec un rayon de courbure (*border-radius*) calculé proportionnellement à la coque. Ainsi, la photo est taillée avec des coins arrondis **avant** d'être dessinée sous la coque.
-
-De plus, cette méthode est **ultra-rapide**, compatible avec tous les navigateurs et fonctionne même si tu testes la page en local !
-
-Voici le code **complet et corrigé** de ton fichier `index.html` :
-
-```html
-<!DOCTYPE html>
+J<!DOCTYPE html>
 <html lang="fr">
 <head>
     <!-- Google Tag Manager -->

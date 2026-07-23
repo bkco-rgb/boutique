@@ -107,15 +107,15 @@ fbq('track', 'PageView');
         #fileNameDisplay.file-added { color: #059669 !important; font-weight: 700; }
         .file-upload-wrapper input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
 
-        #simWrapper { display: none; margin-top: 16px; text-align: center; }
-        .sim-hint { font-size: 12.5px; color: var(--text-sub); margin-bottom: 10px; }
+        #simWrapper { display: none; margin-top: 8px; text-align: center; }
+        .sim-hint { font-size: 12.5px; color: var(--text-sub); margin-bottom: 4px; }
         .sim-canvas-wrap { display: inline-block; border-radius: var(--radius-sm); overflow: hidden; }
         #simCanvas { display: block; touch-action: pan-y; cursor: grab; }
         #simCanvas:active { cursor: grabbing; }
-        .sim-zoom-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 0 10px; }
-        .sim-zoom-row button { width: 34px; height: 34px; flex: none; border-radius: 50%; border: 1.5px solid var(--border); background: #fff; font-size: 18px; font-weight: 800; color: var(--primary); cursor: pointer; }
-        .sim-zoom-row input[type="range"] { flex: 1; }
-        #simLoading { font-size: 12.5px; color: var(--text-sub); margin-top: 10px; }
+        .sim-zoom-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 6px; }
+        .sim-zoom-row button { width: 30px; height: 30px; flex: none; border-radius: 50%; border: 1.5px solid var(--border); background: #fff; font-size: 16px; font-weight: 800; color: var(--primary); cursor: pointer; }
+        .sim-zoom-row input[type="range"] { width: 120px; flex: none; }
+        #simLoading { font-size: 12.5px; color: var(--text-sub); margin-top: 6px; }
 
         .btn-whatsapp { width: 100%; background-color: var(--whatsapp); color: white; border: none; padding: 20px; border-radius: var(--radius-sm); font-size: 16px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 20px -5px rgba(37, 211, 102, 0.3); position: relative; overflow: hidden; }
         .btn-whatsapp::after { content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%; background: rgba(255, 255, 255, 0.25); transform: rotate(30deg); animation: shine 4s infinite; }

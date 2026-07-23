@@ -541,6 +541,24 @@ fbq('track', 'PageView');
         img.src = caseUrl;
     }
 
+    // Trace un rectangle à coins arrondis — utilisé pour découper la zone photo avec de
+    // légers coins ronds (comme la vraie découpe de la coque) plutôt que des angles droits
+    // qui peuvent laisser dépasser un petit triangle de photo aux quatre coins.
+    function tracerRectArrondi(ctx, x, y, w, h, r) {
+        const rad = Math.min(r, w / 2, h / 2);
+        ctx.beginPath();
+        if (ctx.roundRect) {
+            ctx.roundRect(x, y, w, h, rad);
+        } else {
+            ctx.moveTo(x + rad, y);
+            ctx.arcTo(x + w, y, x + w, y + h, rad);
+            ctx.arcTo(x + w, y + h, x, y + h, rad);
+            ctx.arcTo(x, y + h, x, y, rad);
+            ctx.arcTo(x, y, x + w, y, rad);
+            ctx.closePath();
+        }
+    }
+
     // Empêche de glisser la photo au point de laisser un vide dans la zone découpée :
     // ses bords doivent toujours dépasser ou toucher les bords du trou, jamais rentrer dedans.
     function limiterDecalage(holeW, holeH, pw, ph) {
@@ -611,8 +629,7 @@ fbq('track', 'PageView');
         limiterDecalage(holeW, holeH, pw, ph);
 
         ctx.save();
-        ctx.beginPath();
-        ctx.rect(holeX, holeY, holeW, holeH);
+        tracerRectArrondi(ctx, holeX, holeY, holeW, holeH, Math.min(holeW, holeH) * 0.09);
         ctx.clip();
         const cx = holeX + holeW / 2 + simState.offsetX;
         const cy = holeY + holeH / 2 + simState.offsetY;
@@ -633,8 +650,7 @@ fbq('track', 'PageView');
         const dispScale = parseFloat(dispCanvas.style.width) / box.visible.w; // l'aperçu est recadré sur la zone visible, pas l'image entière
 
         ctx.save();
-        ctx.beginPath();
-        ctx.rect(box.x, box.y, box.w, box.h);
+        tracerRectArrondi(ctx, box.x, box.y, box.w, box.h, Math.min(box.w, box.h) * 0.09);
         ctx.clip();
         const baseScale = Math.max(box.w / photo.width, box.h / photo.height) * 1.03;
         const finalScale = baseScale * simState.zoom;

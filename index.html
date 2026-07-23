@@ -1,374 +1,790 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Personnalisation de Coque</title>
-  <style>
-    /* --- STYLES GENERAUX --- */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+    <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],j=d.createElement(s);j.async=true;j.src="https://capig.bkshop.boutique/98lomqsynkxgz.js?"+i;f.parentNode.insertBefore(j,f);})(window,document,'script','dataLayer','1x2=EwNFLDo0XiVDNCBfLD84VwxaSkVfXxcfRwUTGAYWA18YCA0fBwgGFA%3D%3D');</script>
+<!-- End Google Tag Manager -->
+    <meta charset="UTF-8">
+    <script>
+!function(f,b,e,v,n,t,s)
+{if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+n.queue=[];t=b.createElement(e);t.async=!0;
+t.src=v;s=b.getElementsByTagName(e)[0];
+s.parentNode.insertBefore(t,s)}(window, document,'script',
+'https://connect.facebook.net/en_US/fbevents.js');
 
-    body {
-      background-color: #f4f7f6;
-      color: #333;
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
+fbq('init', '1472869337291314');
+fbq('track', 'PageView');
+</script>
+    <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=1472869337291314&ev=PageView&noscript=1"
+    /></noscript>
 
-    .customizer-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 30px;
-      max-width: 1000px;
-      width: 100%;
-      background: #ffffff;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-    }
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre Création — BK Pochette Congo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-    /* --- PANNEAU DE COMMANDE (GAUCHE) --- */
-    .controls-panel {
-      flex: 1;
-      min-width: 300px;
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+    <style>
+        :root {
+            --primary: #2563eb;
+            --whatsapp: #25D366;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text-main: #0f172a;
+            --text-sub: #64748b;
+            --border: #e2e8f0;
+            --error: #ef4444;
+            --radius: 24px;
+            --radius-sm: 14px;
+        }
 
-    .step-group {
-      background: #fafafa;
-      padding: 20px;
-      border-radius: 8px;
-      border: 1px solid #eaeaea;
-    }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
-    .step-title {
-      font-size: 1.1rem;
-      font-weight: 600;
-      margin-bottom: 12px;
-      color: #2c3e50;
-    }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(-45deg, #f8fafc, #eff6ff, #fffbeb, #f1f5f9);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
 
-    select, input[type="file"] {
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-    }
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-    select:focus, input[type="file"]:focus {
-      border-color: #3498db;
-    }
+        .input-error { border-color: var(--error) !important; background-color: #fef2f2 !important; }
 
-    .section-hidden {
-      display: none;
-    }
+        .container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px 25px;
+            border-radius: var(--radius);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-    .section-reveal {
-      display: block;
-      animation: fadeIn 0.3s ease-in-out;
-    }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(5px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+        .header { text-align: center; margin-bottom: 35px; }
+        .header .logo-img { max-width: 180px; height: auto; margin-bottom: 20px; display: inline-block; }
+        .header h1 { font-size: 24px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; margin-bottom: 10px; }
+        .header p { font-size: 15px; color: var(--text-sub); }
 
-    .summary-box {
-      margin-top: 10px;
-      padding: 12px;
-      background: #e8f4fc;
-      border-left: 4px solid #3498db;
-      border-radius: 4px;
-      font-size: 0.9rem;
-    }
+        .form-step { margin-bottom: 30px; }
+        .step-header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+        .step-number { display: flex; justify-content: center; align-items: center; width: 32px; height: 32px; background: #f1f5f9; color: var(--text-sub); border-radius: 50%; font-weight: 800; font-size: 13px; }
+        .form-step.active .step-number { background: var(--primary); color: white; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.25); }
 
-    /* --- PANNEAU SIMULATION (DROITE) --- */
-    .preview-panel {
-      flex: 1;
-      min-width: 300px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      background: #f9f9f9;
-      border-radius: 8px;
-      padding: 20px;
-    }
+        #step2, #step3 { display: none; opacity: 0; max-height: 0; }
+        .section-reveal { display: block !important; animation: sectionFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes sectionFadeIn { from { opacity: 0; max-height: 0; transform: scale(0.98); } to { opacity: 1; max-height: 1200px; transform: scale(1); } }
 
-    .sim-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 320px; /* Ratio 1:2 basé sur 800x1600 */
-      aspect-ratio: 1 / 2;
-      background: #e0e0e0;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-    }
+        .form-group { margin-bottom: 20px; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        label { display: block; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 8px; color: var(--text-sub); }
+        
+        input, select { width: 100%; padding: 16px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 14px; background: #fcfdfe; transition: 0.3s; }
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08); }
 
-    canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
+        .info-delivery { background: #eff6ff; border: 1px solid #dbeafe; padding: 15px; border-radius: var(--radius-sm); margin-bottom: 20px; font-size: 13px; color: var(--primary); display: none; text-align: center; }
 
-    .sim-hint {
-      margin-top: 12px;
-      font-size: 0.85rem;
-      color: #666;
-      text-align: center;
-    }
+        #summaryBox { background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%); padding: 25px; border-radius: var(--radius-sm); border: 1px solid rgba(37, 99, 235, 0.1); margin-bottom: 25px; text-align: center; }
+        .price-tag { font-size: 36px; font-weight: 800; color: var(--primary); margin-top: 5px; }
 
-    .sim-loading {
-      font-size: 0.9rem;
-      color: #888;
-      margin-bottom: 8px;
-    }
-  </style>
+        .file-upload-wrapper { position: relative; border: 2px dashed var(--border); border-radius: var(--radius-sm); padding: 25px; text-align: center; background: #f8fafc; cursor: pointer; transition: 0.3s; }
+        #fileNameDisplay.file-added { color: #059669 !important; font-weight: 700; }
+        .file-upload-wrapper input[type="file"] { position: absolute; width: 100%; height: 100%; top: 0; left: 0; opacity: 0; cursor: pointer; }
+
+        #simWrapper { display: none; margin-top: 8px; text-align: center; }
+        .sim-hint { font-size: 12.5px; color: var(--text-sub); margin-bottom: 4px; }
+        .sim-canvas-wrap { display: inline-block; border-radius: var(--radius-sm); overflow: hidden; }
+        #simCanvas { display: block; touch-action: pan-y; cursor: grab; }
+        #simCanvas:active { cursor: grabbing; }
+        .sim-zoom-row { display: flex; align-items: center; justify-content: center; gap: 12px; margin-top: 6px; }
+        .sim-zoom-row button { width: 30px; height: 30px; flex: none; border-radius: 50%; border: 1.5px solid var(--border); background: #fff; font-size: 16px; font-weight: 800; color: var(--primary); cursor: pointer; }
+        .sim-zoom-row input[type="range"] { width: 120px; flex: none; }
+        #simLoading { font-size: 12.5px; color: var(--text-sub); margin-top: 6px; }
+
+        .btn-whatsapp { width: 100%; background-color: var(--whatsapp); color: white; border: none; padding: 20px; border-radius: var(--radius-sm); font-size: 16px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; box-shadow: 0 10px 20px -5px rgba(37, 211, 102, 0.3); position: relative; overflow: hidden; }
+        .btn-whatsapp::after { content: ''; position: absolute; top: -50%; left: -60%; width: 20%; height: 200%; background: rgba(255, 255, 255, 0.25); transform: rotate(30deg); animation: shine 4s infinite; }
+        @keyframes shine { 0% { left: -60%; } 15% { left: 120%; } 100% { left: 120%; } }
+    </style>
 </head>
 <body>
-
-<div class="customizer-container">
-  
-  <!-- PANNEAU DE CONFIGURATION -->
-  <div class="controls-panel">
-    <h2>Personnalisez votre coque</h2>
-    
-    <!-- ÉTAPE 1 : Choix du modèle -->
-    <div class="step-group">
-      <div class="step-title">1. Choisissez votre modèle</div>
-      <select id="phoneModel" onchange="revelerEtape2()">
-        <option value="">-- Sélectionnez un modèle --</option>
-        <option value="iPhone 15 Pro">iPhone 15 Pro</option>
-        <option value="iPhone 16 Pro">iPhone 16 Pro</option>
-        <option value="Samsung Galaxy S24">Samsung Galaxy S24</option>
-      </select>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://capig.bkshop.boutique/ns.html?id=GTM-T9SX4BFK" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<div class="container">
+    <div class="header">
+        <img src="ted.webp" alt="Logo BK Pochette Congo" class="logo-img">
+        <h1>Sublimez votre Smartphone</h1>
+        <p>Une création unique, conçue pour vous.</p>
     </div>
 
-    <!-- ÉTAPE 2 : Importation de photo -->
-    <div id="step2" class="step-group section-hidden">
-      <div class="step-title">2. Ajoutez votre photo</div>
-      <input type="file" id="photoInput" accept="image/*" onchange="traiterPhoto(event)">
-    </div>
+    <form id="act1Form">
+        <div class="form-step active" id="step1Container">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">Faisons connaissance</div>
+            </div>
+            <div class="step-content">
+                <div class="form-group">
+                    <label>Votre Nom Complet</label>
+                    <input type="text" id="clientName" placeholder="Comment devons-nous vous appeler ?" required oninput="this.classList.remove('input-error')">
+                </div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Votre Marque</label>
+                        <select id="phoneBrand" onchange="verifierNomAvantModele()" required>
+                            <option value="">-- Choisir --</option>
+                            <option value="Apple">Apple</option>
+                            <option value="Samsung">Samsung</option>
+                            <option value="Tecno">Tecno</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Votre Modèle</label>
+                        <select id="phoneModel" onchange="revelerEtape2()" disabled required>
+                            <option value="">-- Précisez --</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    <!-- RÉSUMÉ & PRIX -->
-    <div id="summaryBox" class="summary-box section-hidden">
-      <p>Modèle sélectionné : <strong id="summaryModel">-</strong></p>
-      <p>Prix : <strong id="summaryPrice">19,99 €</strong></p>
-    </div>
-  </div>
+        <div class="form-step" id="step2">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">Votre Création & Quantité</div>
+            </div>
+            <div class="step-content">
+                <div class="form-group">
+                    <label>Nombre de pièces souhaitées</label>
+                    <input type="number" id="orderQty" value="1" min="1" oninput="mettreAJourPrix()" required>
+                </div>
+                <div id="simWrapper">
+                    <div class="sim-hint" id="simHint">✨ Aperçu de votre coque — glissez la photo pour l'ajuster</div>
+                    <div class="sim-canvas-wrap"><canvas id="simCanvas"></canvas></div>
+                    <div class="sim-zoom-row">
+                        <button type="button" id="simZoomOut" aria-label="Réduire">−</button>
+                        <input type="range" id="simZoomSlider" min="100" max="300" value="100">
+                        <button type="button" id="simZoomIn" aria-label="Agrandir">+</button>
+                    </div>
+                    <div id="simLoading"></div>
+                </div>
+                <div class="form-group">
+                    <label>Votre plus belle photo</label>
+                    <div class="file-upload-wrapper" id="uploadWrapper">
+                        <span id="fileNameDisplay" style="font-size: 13px; color: var(--text-sub);">📸 Cliquez ici pour joindre votre image</span>
+                        <input type="file" id="clientPhoto" accept="image/*" onchange="revelerEtape3()" required>
+                    </div>
+                </div>
+                <div id="summaryBox" style="display: none;">
+                    <p style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-sub); letter-spacing: 1.5px;">Estimation de votre commande</p>
+                    <div id="summaryText" style="font-weight: 700; font-size: 17px; margin-top: 8px;"></div>
+                    <div class="price-tag"><span id="totalPrice">0</span> $</div>
+                    <div id="unitInfo" style="font-size: 12px; color: var(--text-sub); margin-top: 4px; font-style: italic;"></div>
+                </div>
+            </div>
+        </div>
 
-  <!-- PANNEAU D'APERÇU CANVAS -->
-  <div class="preview-panel">
-    <div id="simLoading" class="sim-loading"></div>
-    <div id="simWrapper" class="sim-wrapper" style="display: none;">
-      <canvas id="simCanvas" width="800" height="1600"></canvas>
-    </div>
-    <div id="simHint" class="sim-hint"></div>
-  </div>
-
+        <div class="form-step" id="step3">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-title">Adresse & Livraison</div>
+            </div>
+            <div class="step-content">
+                <div class="form-group">
+                    <label>Contact WhatsApp</label>
+                    <input type="tel" id="clientTel" value="+243 " required oninput="validerTelephone(this)">
+                </div>
+                <div class="form-group">
+                    <label>Ville de Livraison</label>
+                    <select id="clientVille" onchange="chargerCommunes();" required>
+                        <option value="">-- Sélectionner la ville --</option>
+                        <option value="Kinshasa">Kinshasa</option>
+                        <option value="Lubumbashi">Lubumbashi</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Commune</label>
+                    <select id="clientCommune" disabled onchange="mettreAJourFraisLivraison(); this.classList.remove('input-error')" required>
+                        <option value="">-- Choisir la ville d'abord --</option>
+                    </select>
+                </div>
+                <div id="deliveryInfoBox" class="info-delivery"></div>
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label>Avenue</label><input type="text" id="clientAvenue" placeholder="Ex: Av. de la Paix" required oninput="this.classList.remove('input-error')">
+                    </div>
+                    <div class="form-group">
+                        <label>N° Maison</label><input type="text" id="clientNum" placeholder="Ex: 12 bis" required oninput="this.classList.remove('input-error')">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Référence / Arrêt (Facultatif)</label><input type="text" id="clientArret" placeholder="Ex: Près de l'église">
+                </div>
+                <div class="cta-zone">
+                    <button type="button" class="btn-whatsapp" onclick="envoyerCommande()">
+                        <span>Transmettre ma Photo & Commander</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
 </div>
 
 <script>
-  // STATE GLOBAL DE LA SIMULATION
-  const simState = {
-    model: null,
-    caseImg: null,  // Calque transparent de la coque
-    photo: null,    // Image téléchargée par l'utilisateur
-    box: null
-  };
+    // BASE DE DONNÉES PRODUITS
+    const baseDonneesModeles = {
+        "Apple": [
+            "iPhone 17 Pro Max", "iPhone 17 Pro", "iPhone 17 Air", "iPhone 17",
+            "iPhone 16 Pro Max", "iPhone 16 Pro", "iPhone 16 Plus", "iPhone 16", "iPhone 16e",
+            "iPhone 15 Pro Max", "iPhone 15 Pro", "iPhone 15 Plus", "iPhone 15",
+            "iPhone 14 Pro Max", "iPhone 14 Pro", "iPhone 14 Plus", "iPhone 14",
+            "iPhone 13 Pro Max", "iPhone 13 Pro", "iPhone 13", "iPhone 13 mini",
+            "iPhone 12 Pro Max", "iPhone 12 Pro", "iPhone 12", "iPhone 12 mini",
+            "iPhone 11 Pro Max", "iPhone 11 Pro", "iPhone 11",
+            "iPhone XS Max", "iPhone XS", "iPhone XR", "iPhone X",
+            "iPhone 8 Plus", "iPhone 8", "iPhone SE (3e génération)", "iPhone SE (2e génération)"
+        ],
+        "Samsung": [
+            "Galaxy S26 Ultra", "Galaxy S26+", "Galaxy S26",
+            "Galaxy S25 Ultra", "Galaxy S25+", "Galaxy S25 Edge", "Galaxy S25 FE", "Galaxy S25",
+            "Galaxy S24 Ultra", "Galaxy S24 FE", "Galaxy S24+", "Galaxy S24",
+            "Galaxy S23 Ultra", "Galaxy S23 FE", "Galaxy S23+", "Galaxy S23",
+            "Galaxy S22 Ultra", "Galaxy S22+", "Galaxy S22",
+            "Galaxy S21 Ultra", "Galaxy S21 FE", "Galaxy S21+", "Galaxy S21",
+            "Galaxy S20 Ultra", "Galaxy S20 FE", "Galaxy S20+", "Galaxy S20",
+            "Galaxy S10+", "Galaxy S10 Lite", "Galaxy S10 5G", "Galaxy S10", "Galaxy S10e",
+            "Galaxy Z Fold 8", "Galaxy Z Fold 7 Ultra", "Galaxy Z Fold 7", "Galaxy Z Fold 6", "Galaxy Z Fold 5", "Galaxy Z Fold 4", "Galaxy Z Fold 3", "Galaxy Z Fold 2", "Galaxy Fold",
+            "Galaxy Z Flip 8", "Galaxy Z Flip 7", "Galaxy Z Flip 6", "Galaxy Z Flip 5", "Galaxy Z Flip 4", "Galaxy Z Flip 3", "Galaxy Z Flip 5G", "Galaxy Z Flip",
+            "Galaxy Note 20 Ultra", "Galaxy Note 20", "Galaxy Note 10+", "Galaxy Note 10 Lite", "Galaxy Note 10",
+            "Galaxy A56 5G", "Galaxy A55 5G", "Galaxy A54 5G", "Galaxy A53 5G", "Galaxy A52s 5G", "Galaxy A52 5G", "Galaxy A52", "Galaxy A51", "Galaxy A50s", "Galaxy A50",
+            "Galaxy A35 5G", "Galaxy A34 5G", "Galaxy A33 5G", "Galaxy A32", "Galaxy A31", "Galaxy A30s", "Galaxy A30",
+            "Galaxy A17", "Galaxy A16", "Galaxy A15", "Galaxy A14", "Galaxy A13", "Galaxy A12"
+        ],
+        "Tecno": ["Camon 30 Premier", "Camon 30", "Camon 20 Pro", "Camon 20"]
+    };
 
-  // Cache pour éviter de recharger les coques déjà téléchargées
-  const simDetectCache = {};
+    const baseCommunes = {
+        "Kinshasa": ["Bandalungwa", "Barumbu", "Bumbu", "Gombe", "Kalamu", "Kasa-Vubu", "Kimbanseke", "Kinshasa", "Kintambo", "Kisenso", "Lemba", "Limete", "Lingwala", "Makala", "Maluku", "Masina", "Matete", "Mont-Ngafula", "Ndjili", "Ngaba", "Ngaliema", "Ngiri-Ngiri", "Nsele", "Selembao"],
+        "Lubumbashi": ["Annexe", "Kampemba", "Katuba", "Kenya", "Lubumbashi", "Ruashi"]
+    };
 
-  // Convertit le nom du modèle en nom de fichier webp propre (ex: "iPhone 15 Pro" -> "iphone-15-pro")
-  function slugModel(str) {
-    return str
-      .toLowerCase()
-      .trim()
-      .replace(/[^\w\s-]/g, '')
-      .replace(/[\s_-]+/g, '-')
-      .replace(/^-+|-+$/g, '');
-  }
-
-  // 1. Appelée au changement de modèle dans le menu déroulant
-  function revelerEtape2() {
-    const model = document.getElementById('phoneModel').value;
-    if (model) { 
-      simState.model = model;
-      document.getElementById('step2').classList.add('section-reveal'); 
-      
-      // Mise à jour de la boîte de résumé
-      document.getElementById('summaryModel').textContent = model;
-      document.getElementById('summaryBox').classList.add('section-reveal');
-      
-      // Réinitialise l'overlay coque tout en GARDANT la photo
-      initApercuVide(); 
-    }
-  }
-
-  // 2. Prépare le chargement de la coque sans réinitialiser la photo client
-  function initApercuVide() {
-    simState.caseImg = null; 
-    simState.box = null;
-    
-    // REMARQUE CLEF : On ne remet PAS simState.photo à null ici !
-    
-    const modele = document.getElementById('phoneModel').value;
-    if (!modele) return;
-    
-    const slug = slugModel(modele);
-    // Assurez-vous d'avoir vos images "iphone-15-pro.webp" etc. dans le même dossier
-    chargerCoque(slug + '.webp', slug);
-  }
-
-  // 3. Charge l'image de masque/overlay du modèle de téléphone
-  function chargerCoque(caseUrl, slug) {
-    const simWrapper = document.getElementById('simWrapper');
-    const loadingEl = document.getElementById('simLoading');
-
-    loadingEl.textContent = "Chargement du modèle...";
-
-    function afficherAvecBox(img, box) {
-      simState.caseImg = img;
-      simState.box = box;
-      simWrapper.style.display = 'block';
-      loadingEl.textContent = '';
-      
-      // Texte d'aide dynamique
-      if (simState.photo) {
-        document.getElementById('simHint').textContent = "✨ Aperçu ajusté automatiquement pour " + simState.model;
-      } else {
-        document.getElementById('simHint').textContent = "👇 Sélectionnez une photo ci-contre pour la placer sur la coque";
-      }
-      
-      dessinerSim();
+    // LOGIQUE D'INTERFACE
+    function verifierNomAvantModele() {
+        const nom = document.getElementById('clientName');
+        if (!nom.value.trim()) { nom.classList.add('input-error'); document.getElementById('phoneBrand').value = ""; alert("Veuillez d'abord saisir votre nom."); return; }
+        nom.classList.remove('input-error'); chargerModeles();
     }
 
-    if (simDetectCache[slug]) {
-      afficherAvecBox(simDetectCache[slug].img, simDetectCache[slug].box);
-      return;
+    function validerTelephone(input) {
+        if (!input.value.startsWith('+243 ')) input.value = '+243 ';
+        let suffixe = input.value.substring(5).replace(/\D/g, '');
+        if (suffixe.length > 9) suffixe = suffixe.substring(0, 9);
+        input.value = '+243 ' + suffixe;
     }
 
-    const img = new Image();
-    img.onload = () => {
-      const box = detecterZonePhoto(img);
-      simDetectCache[slug] = { img, box };
-      afficherAvecBox(img, box);
-    };
-    img.onerror = () => {
-      loadingEl.textContent = '';
-      console.warn('Image de coque non trouvée pour :', caseUrl);
-      // Fallback si l'image .webp n'existe pas encore
-      afficherAvecBox(null, null);
-    };
-    img.src = caseUrl;
-  }
+    function chargerModeles() {
+        const marque = document.getElementById('phoneBrand').value;
+        const mSelect = document.getElementById('phoneModel');
+        mSelect.innerHTML = '<option value="">-- Votre modèle --</option>';
+        if (marque) {
+            mSelect.disabled = false;
+            baseDonneesModeles[marque].forEach(m => {
+                let opt = document.createElement('option'); opt.value = m; opt.textContent = m;
+                mSelect.appendChild(opt);
+            });
+        } else { mSelect.disabled = true; }
+    }
 
-  // 4. Détection simplifiée de la zone utile (Marge fixe de sécurité)
-  function detecterZonePhoto(img) {
-    return {
-      insetX: 800 * 0.025, // 2.5% marge horizontale
-      insetY: 1600 * 0.025 // 2.5% marge verticale
-    };
-  }
+    function chargerCommunes() {
+        const ville = document.getElementById('clientVille').value;
+        const commSelect = document.getElementById('clientCommune');
+        const box = document.getElementById('deliveryInfoBox');
+        box.style.display = "none";
+        commSelect.innerHTML = '<option value="">-- Sélectionner la commune --</option>';
+        if (ville) {
+            commSelect.disabled = false;
+            baseCommunes[ville].forEach(c => {
+                let opt = document.createElement('option'); opt.value = c; opt.textContent = c;
+                commSelect.appendChild(opt);
+            });
+            if (ville === "Lubumbashi") {
+                box.style.display = "block";
+                box.innerHTML = "✈️ <b>Expédition :</b> +5$ fixes pour Lubumbashi";
+            }
+        } else { commSelect.disabled = true; }
+    }
 
-  // 5. Lecture et conversion de la photo uploadée
-  function traiterPhoto(event) {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
-        simState.photo = img; // Sauvegarde dans le state global
-        
-        if (simState.model) {
-          document.getElementById('simHint').textContent = "✨ Aperçu généré avec succès !";
+    function mettreAJourFraisLivraison() {
+        const ville = document.getElementById('clientVille').value;
+        const commune = document.getElementById('clientCommune').value;
+        const box = document.getElementById('deliveryInfoBox');
+        if (ville === "Kinshasa" && commune) {
+            box.style.display = "block";
+            box.innerHTML = (commune === "Nsele") ? "🚛 <b>Livraison :</b> 10.000 FC" : "🚛 <b>Livraison :</b> 8.000 FC";
         }
-        dessinerSim();
-      };
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
-  }
-
-  // 6. MOTEUR DU CANVAS : Redessine la photo + le masque arrondi + la coque
-  function dessinerSim() {
-    const canvas = document.getElementById('simCanvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-
-    // Réinitialisation de la grille canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // --- A. DESSINER ET MASQUER LA PHOTO DU CLIENT ---
-    if (simState.photo) {
-      ctx.save();
-
-      // Paramètres de découpe (800x1600, Coins arrondis à 13%, Inset 2.5%)
-      const insetX = canvas.width * 0.025;  // 20px
-      const insetY = canvas.height * 0.025; // 40px
-      const w = canvas.width - (insetX * 2);
-      const h = canvas.height - (insetY * 2);
-      const radius = Math.min(w, h) * 0.13; // ~98px de rayon de coin
-
-      // Tracé du masque arrondi
-      ctx.beginPath();
-      if (ctx.roundRect) {
-        ctx.roundRect(insetX, insetY, w, h, radius);
-      } else {
-        ctx.rect(insetX, insetY, w, h); // Fallback navigateurs très anciens
-      }
-      ctx.clip(); // Limite le dessin à l'intérieur de la forme
-
-      // Calcul du ratio pour afficher la photo en "Cover" (remplissage proportionnel)
-      const img = simState.photo;
-      let drawW = canvas.width;
-      let drawH = canvas.height;
-      let offsetX = 0;
-      let offsetY = 0;
-
-      const imgRatio = img.width / img.height;
-      const canvasRatio = canvas.width / canvas.height;
-
-      if (imgRatio > canvasRatio) {
-        drawH = canvas.height;
-        drawW = canvas.height * imgRatio;
-        offsetX = (canvas.width - drawW) / 2;
-      } else {
-        drawW = canvas.width;
-        drawH = canvas.width / imgRatio;
-        offsetY = (canvas.height - drawH) / 2;
-      }
-
-      // Dessin de la photo importée
-      ctx.drawImage(img, offsetX, offsetY, drawW, drawH);
-      ctx.restore();
-    } else {
-      // Fond neutre par défaut si pas encore de photo
-      ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
     }
 
-    // --- B. SUPERPOSER LA COQUE TRANSPARENTE (Contour & Bloc caméra) ---
-    if (simState.caseImg) {
-      ctx.drawImage(simState.caseImg, 0, 0, canvas.width, canvas.height);
+    function mettreAJourPrix() {
+        const marque = document.getElementById('phoneBrand').value;
+        const modele = document.getElementById('phoneModel').value;
+        const qte = parseInt(document.getElementById('orderQty').value) || 1;
+        
+        if (marque && modele) {
+            let unitPrice = 15;
+            if (marque === "Apple") {
+                if (modele.includes("iPhone 17") || modele.includes("iPhone 16")) {
+                    unitPrice = 18;
+                } else if (modele.includes("iPhone 11") || modele.includes("iPhone X")) {
+                    unitPrice = 10;
+                }
+            } else if (marque === "Samsung") {
+                if (modele.includes("S25") || modele.includes("S26") || modele.includes("Fold") || modele.includes("Flip")) {
+                    unitPrice = 18;
+                }
+            }
+            const total = unitPrice * qte;
+            document.getElementById('summaryText').textContent = `${qte} x ${marque} ${modele}`;
+            document.getElementById('totalPrice').textContent = total;
+            document.getElementById('unitInfo').textContent = `(${unitPrice}$ par unité)`;
+        }
     }
-  }
+
+    function revelerEtape2() {
+        const m = document.getElementById('phoneModel').value;
+        if (m) { 
+            document.getElementById('step2').classList.add('section-reveal'); 
+            initApercuVide(); 
+        }
+    }
+
+    function revelerEtape3() {
+        const f = document.getElementById('clientPhoto').files[0];
+        if (f) {
+            document.getElementById('fileNameDisplay').textContent = "✅ Image ajoutée";
+            document.getElementById('fileNameDisplay').classList.add('file-added');
+            document.getElementById('step3').classList.add('section-reveal');
+            lancerSimulation(f);
+        }
+    }
+
+    function reveleerPrix() {
+        mettreAJourPrix();
+        document.getElementById('summaryBox').style.display = 'block';
+    }
+
+    // ==========================================================
+    // SIMULATION VISUELLE AVEC MARGE D'AJUSTEMENT (INSET)
+    // ==========================================================
+    function slugModel(nom) {
+        return (nom || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    }
+
+    const simState = { caseImg: null, photo: null, box: null, zoom: 1, offsetX: 0, offsetY: 0, dragging: false };
+    let simDetectCache = {};
+
+    function detecterZonePhoto(img) {
+        const w = img.naturalWidth, h = img.naturalHeight;
+        try {
+            const c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            const ctx = c.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            const data = ctx.getImageData(0, 0, w, h).data;
+            const isTransp = (x, y) => data[(y * w + x) * 4 + 3] < 20;
+
+            const outer = new Uint8Array(w * h);
+            const stack = [];
+            function visite(x, y) {
+                if (x < 0 || x >= w || y < 0 || y >= h) return;
+                const i = y * w + x;
+                if (outer[i] || !isTransp(x, y)) return;
+                outer[i] = 1; stack.push(i);
+            }
+            for (let x = 0; x < w; x++) { visite(x, 0); visite(x, h - 1); }
+            for (let y = 0; y < h; y++) { visite(0, y); visite(w - 1, y); }
+            while (stack.length) {
+                const i = stack.pop();
+                const x = i % w, y = (i / w) | 0;
+                visite(x + 1, y); visite(x - 1, y); visite(x, y + 1); visite(x, y - 1);
+            }
+
+            let minX = w, maxX = 0, minY = h, maxY = 0, trouve = false;
+            let vMinX = w, vMaxX = 0, vMinY = h, vMaxY = 0;
+
+            for (let y = 0; y < h; y++) {
+                for (let x = 0; x < w; x++) {
+                    const i = y * w + x;
+                    if (!outer[i]) {
+                        if (x < vMinX) vMinX = x; if (x > vMaxX) vMaxX = x;
+                        if (y < vMinY) vMinY = y; if (y > vMaxY) vMaxY = y;
+                    }
+                    if (isTransp(x, y) && !outer[i]) {
+                        trouve = true;
+                        if (x < minX) minX = x; if (x > maxX) maxX = x;
+                        if (y < minY) minY = y; if (y > maxY) maxY = y;
+                    }
+                }
+            }
+            if (!trouve) {
+                return { x: 0, y: 0, w: w, h: h, imgW: w, imgH: h, visible: { x: 0, y: 0, w: w, h: h } };
+            }
+            return {
+                x: minX, y: minY, w: maxX - minX, h: maxY - minY, imgW: w, imgH: h,
+                visible: { x: vMinX, y: vMinY, w: vMaxX - vMinX, h: vMaxY - vMinY }
+            };
+        } catch (e) {
+            return { x: 0, y: 0, w: w, h: h, imgW: w, imgH: h, visible: { x: 0, y: 0, w: w, h: h } };
+        }
+    }
+
+    // MISE À JOUR : Conservations de la photo lors du changement de modèle
+    function initApercuVide() {
+        simState.caseImg = null; 
+        simState.box = null; 
+        // On conserve simState.photo s'il est déjà présent !
+        
+        const modele = document.getElementById('phoneModel').value;
+        if (!modele) return;
+        const slug = slugModel(modele);
+        chargerCoque(slug + '.webp', slug);
+    }
+
+    function lancerSimulation(fichierPhoto) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const photoImg = new Image();
+            photoImg.onload = () => {
+                simState.photo = photoImg;
+                simState.zoom = 1; simState.offsetX = 0; simState.offsetY = 0;
+                document.getElementById('simZoomSlider').value = 100;
+                document.getElementById('simHint').textContent = "✨ Ajustez votre photo — glissez pour repositionner";
+                dessinerSim();
+                reveleerPrix();
+            };
+            photoImg.src = e.target.result;
+        };
+        reader.readAsDataURL(fichierPhoto);
+    }
+
+    // MISE À JOUR : Gestion dynamique si une photo est déjà en mémoire
+    function chargerCoque(caseUrl, slug) {
+        const simWrapper = document.getElementById('simWrapper');
+        const loadingEl = document.getElementById('simLoading');
+
+        function afficherAvecBox(img, box) {
+            simState.caseImg = img;
+            simState.box = box;
+            simWrapper.style.display = 'block';
+            loadingEl.textContent = '';
+            
+            if (simState.photo) {
+                document.getElementById('simHint').textContent = "✨ Ajustez votre photo — glissez pour repositionner";
+                reveleerPrix(); // Met à jour l'estimation et le prix avec le nouveau modèle
+            } else {
+                document.getElementById('simHint').textContent = "👇 Ajoutez votre photo ci-dessous pour la voir sur la coque";
+            }
+            
+            dessinerSim();
+        }
+
+        if (simDetectCache[slug]) {
+            afficherAvecBox(simDetectCache[slug].img, simDetectCache[slug].box);
+            return;
+        }
+
+        const img = new Image();
+        img.onload = () => {
+            const box = detecterZonePhoto(img);
+            simDetectCache[slug] = { img, box };
+            afficherAvecBox(img, box);
+        };
+        img.onerror = () => {
+            console.warn('[simulation] Pas de coque pour ce modèle :', caseUrl);
+        };
+        img.src = caseUrl;
+    }
+
+    function limiterDecalage(outerW, outerH, pw, ph) {
+        const maxX = Math.max(0, (pw - outerW) / 2);
+        const maxY = Math.max(0, (ph - outerH) / 2);
+        simState.offsetX = Math.max(-maxX, Math.min(maxX, simState.offsetX));
+        simState.offsetY = Math.max(-maxY, Math.min(maxY, simState.offsetY));
+    }
+
+    function tracerCoinsArrondis(ctx, x, y, w, h, r) {
+        ctx.beginPath();
+        if (ctx.roundRect) {
+            ctx.roundRect(x, y, w, h, r);
+        } else {
+            ctx.moveTo(x + r, y);
+            ctx.arcTo(x + w, y, x + w, y + h, r);
+            ctx.arcTo(x + w, y + h, x, y + h, r);
+            ctx.arcTo(x, y + h, x, y, r);
+            ctx.arcTo(x, y, x + w, y, r);
+            ctx.closePath();
+        }
+    }
+
+    function dessinerSim() {
+        const box = simState.box, caseImg = simState.caseImg, photo = simState.photo;
+        if (!box || !caseImg) return;
+        const canvas = document.getElementById('simCanvas');
+        const dpr = window.devicePixelRatio || 1;
+        const vis = box.visible;
+        const displayW = Math.min(230, window.innerWidth - 60);
+        const scale = displayW / vis.w;
+        const cssW = vis.w * scale, cssH = vis.h * scale;
+
+        canvas.width = Math.round(cssW * dpr);
+        canvas.height = Math.round(cssH * dpr);
+        canvas.style.width = cssW + 'px';
+        canvas.style.height = cssH + 'px';
+
+        const ctx = canvas.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        ctx.clearRect(0, 0, cssW, cssH);
+
+        const drawX = -vis.x * scale, drawY = -vis.y * scale, drawW = box.imgW * scale, drawH = box.imgH * scale;
+
+        // MARGE INTERNE ET COURBURE DE SÉCURITÉ POUR ÉVITER QUELQUE DÉPASSEMENT
+        const inset = Math.round(cssW * 0.025); // 2.5% de retrait (~4-5px de sécurité sous la coque)
+        const clipW = cssW - (inset * 2);
+        const clipH = cssH - (inset * 2);
+        const outerRadius = clipW * 0.12;
+
+        simState.holeRect = { x: 0, y: 0, w: cssW, h: cssH };
+
+        if (!photo) {
+            ctx.save();
+            tracerCoinsArrondis(ctx, inset, inset, clipW, clipH, outerRadius);
+            ctx.clip();
+            ctx.fillStyle = '#f1f5f9';
+            ctx.fillRect(0, 0, cssW, cssH);
+            ctx.fillStyle = '#94a3b8';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = Math.round(cssW * 0.14) + 'px sans-serif';
+            ctx.fillText('📸', cssW / 2, cssH / 2 - cssW * 0.06);
+            ctx.font = '600 ' + Math.round(cssW * 0.052) + 'px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Votre photo apparaîtra ici', cssW / 2, cssH / 2 + cssW * 0.12);
+            ctx.restore();
+            ctx.drawImage(caseImg, drawX, drawY, drawW, drawH);
+            return;
+        }
+
+        const baseScale = Math.max(clipW / photo.width, clipH / photo.height);
+        const finalScale = baseScale * simState.zoom;
+        const pw = photo.width * finalScale, ph = photo.height * finalScale;
+        limiterDecalage(clipW, clipH, pw, ph);
+
+        const cx = cssW / 2 + simState.offsetX;
+        const cy = cssH / 2 + simState.offsetY;
+
+        // MASQUE RÉDUIT LÉGÈREMENT ENTRANT SOUS LES BORDURES DE LA COQUE
+        ctx.save();
+        tracerCoinsArrondis(ctx, inset, inset, clipW, clipH, outerRadius);
+        ctx.clip();
+
+        ctx.drawImage(photo, cx - pw / 2, cy - ph / 2, pw, ph);
+        ctx.restore();
+
+        // Dessin de la coque PNG par-dessus
+        ctx.drawImage(caseImg, drawX, drawY, drawW, drawH);
+    }
+
+    function composerImageFinale() {
+        const box = simState.box, caseImg = simState.caseImg, photo = simState.photo;
+        if (!box || !caseImg || !photo) return null;
+        
+        const vis = box.visible;
+        const canvas = document.createElement('canvas');
+        canvas.width = vis.w; 
+        canvas.height = vis.h;
+        const ctx = canvas.getContext('2d');
+        
+        const dispCanvas = document.getElementById('simCanvas');
+        const dispScale = parseFloat(dispCanvas.style.width) / vis.w;
+
+        const inset = Math.round(vis.w * 0.025);
+        const clipW = vis.w - (inset * 2);
+        const clipH = vis.h - (inset * 2);
+        const outerRadius = clipW * 0.12;
+
+        const baseScale = Math.max(clipW / photo.width, clipH / photo.height);
+        const finalScale = baseScale * simState.zoom;
+        const pw = photo.width * finalScale, ph = photo.height * finalScale;
+        
+        const cx = vis.w / 2 + simState.offsetX / dispScale;
+        const cy = vis.h / 2 + simState.offsetY / dispScale;
+
+        ctx.save();
+        tracerCoinsArrondis(ctx, inset, inset, clipW, clipH, outerRadius);
+        ctx.clip();
+
+        ctx.drawImage(photo, cx - pw / 2, cy - ph / 2, pw, ph);
+        ctx.restore();
+
+        const drawX = -vis.x, drawY = -vis.y, drawW = box.imgW, drawH = box.imgH;
+        ctx.drawImage(caseImg, drawX, drawY, drawW, drawH);
+        
+        return canvas.toDataURL('image/jpeg', 0.9);
+    }
+
+    // Glisser-déposer (souris + tactile)
+    (function initSimDragZoom() {
+        const canvas = document.getElementById('simCanvas');
+        let dragStart = null;
+        canvas.addEventListener('pointerdown', (e) => {
+            const hole = simState.holeRect;
+            if (!hole) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left, y = e.clientY - rect.top;
+            if (x < hole.x || x > hole.x + hole.w || y < hole.y || y > hole.y + hole.h) return;
+            e.preventDefault();
+            dragStart = { x: e.clientX, y: e.clientY, ox: simState.offsetX, oy: simState.offsetY };
+            canvas.setPointerCapture(e.pointerId);
+        });
+        canvas.addEventListener('pointermove', (e) => {
+            if (!dragStart) return;
+            simState.offsetX = dragStart.ox + (e.clientX - dragStart.x);
+            simState.offsetY = dragStart.oy + (e.clientY - dragStart.y);
+            dessinerSim();
+        });
+        ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev =>
+            canvas.addEventListener(ev, () => { dragStart = null; }));
+
+        document.getElementById('simZoomSlider').addEventListener('input', (e) => {
+            simState.zoom = parseInt(e.target.value, 10) / 100;
+            dessinerSim();
+        });
+        document.getElementById('simZoomOut').addEventListener('click', () => {
+            const s = document.getElementById('simZoomSlider');
+            s.value = Math.max(100, parseInt(s.value, 10) - 20);
+            simState.zoom = parseInt(s.value, 10) / 100;
+            dessinerSim();
+        });
+        document.getElementById('simZoomIn').addEventListener('click', () => {
+            const s = document.getElementById('simZoomSlider');
+            s.value = Math.min(300, parseInt(s.value, 10) + 20);
+            simState.zoom = parseInt(s.value, 10) / 100;
+            dessinerSim();
+        });
+    })();
+
+    // ==========================================================
+    // SAUVEGARDE AUTOMATIQUE DE LA PHOTO SUR GOOGLE DRIVE
+    // ==========================================================
+    const DRIVE_UPLOAD_URL = 'https://script.google.com/macros/s/AKfycbzC_pe7DBtNJ55edE8H8HK4-tnALc1u8heYIKIZCew2kmllnNXQt1pFnzRoGSTonfAB/exec';
+
+    function compresserImage(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    const maxWidth = 1280;
+                    const scale = Math.min(1, maxWidth / img.width);
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.8));
+                };
+                img.onerror = () => reject(new Error('Image illisible'));
+                img.src = e.target.result;
+            };
+            reader.onerror = () => reject(new Error('Lecture du fichier impossible'));
+            reader.readAsDataURL(file);
+        });
+    }
+
+    async function envoyerPhotoVersDrive(imageBase64, kind) {
+        try {
+            await fetch(DRIVE_UPLOAD_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                body: JSON.stringify({
+                    image: imageBase64,
+                    imageType: kind || 'photo_brute',
+                    clientName: document.getElementById('clientName').value,
+                    clientTel: document.getElementById('clientTel').value,
+                    marque: document.getElementById('phoneBrand').value,
+                    modele: document.getElementById('phoneModel').value,
+                    qte: document.getElementById('orderQty').value,
+                    total: document.getElementById('totalPrice').textContent,
+                    ville: document.getElementById('clientVille').value,
+                    commune: document.getElementById('clientCommune').value,
+                    avenue: document.getElementById('clientAvenue').value,
+                    numMaison: document.getElementById('clientNum').value
+                })
+            });
+        } catch (err) {
+            console.warn('Sauvegarde Drive échouée (la commande WhatsApp continue normalement) :', err);
+        }
+    }
+
+    // LOGIQUE D'ENVOI ET TRACKING
+    function envoyerCommande() {
+        const ids = ['clientName', 'phoneBrand', 'phoneModel', 'orderQty', 'clientTel', 'clientVille', 'clientCommune', 'clientAvenue', 'clientNum'];
+        let erreur = false;
+        ids.forEach(id => {
+            const el = document.getElementById(id);
+            if (!el.value || (id === 'clientTel' && el.value.length < 14)) {
+                el.classList.add('input-error');
+                erreur = true;
+            }
+        });
+
+        if (erreur) { alert("Oups ! Veuillez remplir les informations en rouge pour finaliser."); return; }
+
+        const eventId = 'bk_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        const commandeData = {
+            content_name: 'Commande Pochette Photo',
+            content_category: document.getElementById('phoneBrand').value,
+            value: parseFloat(document.getElementById('totalPrice').textContent),
+            currency: 'USD'
+        };
+
+        fbq('track', 'Contact', commandeData, { eventID: eventId + '_contact' });
+        fbq('track', 'Purchase', commandeData, { eventID: eventId + '_purchase' });
+
+        const photoFile = document.getElementById('clientPhoto').files[0];
+        if (photoFile) {
+            compresserImage(photoFile)
+                .then(img => envoyerPhotoVersDrive(img, 'photo_brute'))
+                .catch(err => console.warn('Compression photo échouée :', err));
+        }
+
+        const composite = composerImageFinale();
+        if (composite) {
+            envoyerPhotoVersDrive(composite, 'coque_composee');
+        }
+
+        const ville = document.getElementById('clientVille').value;
+        const numWhatsApp = "243812044115";
+        const commune = document.getElementById('clientCommune').value;
+        const frais = (ville === "Kinshasa") ? (commune === "Nsele" ? "10.000 FC" : "8.000 FC") : "+5$";
+
+        const msg = `*COMMANDE BK POCHETTE*%0A%0A👤 *Client :* ${document.getElementById('clientName').value}%0A📦 *Commande :* ${document.getElementById('orderQty').value} x ${document.getElementById('phoneBrand').value} ${document.getElementById('phoneModel').value}%0A💰 *TOTAL :* ${document.getElementById('totalPrice').textContent} $%0A📍 *VILLE :* ${ville}%0A🚛 *FRAIS :* ${frais}%0A🏠 *ADRESSE :* ${commune}, ${document.getElementById('clientAvenue').value}, N°${document.getElementById('clientNum').value}%0A📞 *WhatsApp :* ${document.getElementById('clientTel').value}`;
+
+        window.open(`https://wa.me/${numWhatsApp}?text=${msg}`, '_blank');
+    }
 </script>
-
 </body>
 </html>

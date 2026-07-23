@@ -385,7 +385,8 @@ fbq('track', 'PageView');
     // ==========================================================
     // Convention de nom de fichier : le modèle "iPhone 11 Pro Max" devient
     // "iphone11promax.png" (tout en minuscules, sans espace ni ponctuation).
-    // Les images de coques vivent dans le dossier ./coques/ à côté de index.html.
+    // Les images de coques vivent au même endroit que index.html (racine du site/dépôt),
+    // exactement comme ted.png — pas de sous-dossier.
     // Si le fichier n'existe pas pour un modèle, la simulation est simplement
     // ignorée et l'envoi classique de la photo continue de fonctionner normalement.
     function slugModel(nom) {
@@ -446,7 +447,7 @@ fbq('track', 'PageView');
         if (marque !== 'Apple' || !modele) return; // simulation disponible pour les modèles iPhone fournis pour l'instant
 
         const slug = slugModel(modele);
-        const caseUrl = 'coques/' + slug + '.png';
+        const caseUrl = slug + '.png';
 
         loadingEl.textContent = '';
         const reader = new FileReader();
@@ -508,7 +509,7 @@ fbq('track', 'PageView');
         img.onerror = () => {
             // Le fichier n'existe pas à ce chemin, ou le nom ne correspond pas exactement au modèle.
             loadingEl.style.color = '#dc2626';
-            loadingEl.textContent = "⚠️ Image introuvable : " + caseUrl + " — vérifie que le dossier coques/ est bien placé à côté de index.html sur ton hébergement.";
+            loadingEl.textContent = "⚠️ Image introuvable : " + caseUrl + " — vérifie qu'elle est bien déposée à la racine de ton dépôt/hébergement, au même endroit qu'index.html.";
             console.warn('[simulation] Image introuvable :', caseUrl);
         };
         img.src = caseUrl;

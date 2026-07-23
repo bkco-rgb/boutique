@@ -174,11 +174,15 @@ fbq('track', 'PageView');
                     <label>Nombre de pièces souhaitées</label>
                     <input type="number" id="orderQty" value="1" min="1" oninput="mettreAJourPrix()" required>
                 </div>
-                <div id="summaryBox">
-                    <p style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-sub); letter-spacing: 1.5px;">Estimation de votre commande</p>
-                    <div id="summaryText" style="font-weight: 700; font-size: 17px; margin-top: 8px;"></div>
-                    <div class="price-tag"><span id="totalPrice">0</span> $</div>
-                    <div id="unitInfo" style="font-size: 12px; color: var(--text-sub); margin-top: 4px; font-style: italic;"></div>
+                <div id="simWrapper">
+                    <div class="sim-hint" id="simHint">✨ Aperçu de votre coque — glissez la photo pour l'ajuster</div>
+                    <div class="sim-canvas-wrap"><canvas id="simCanvas"></canvas></div>
+                    <div class="sim-zoom-row">
+                        <button type="button" id="simZoomOut" aria-label="Réduire">−</button>
+                        <input type="range" id="simZoomSlider" min="100" max="300" value="100">
+                        <button type="button" id="simZoomIn" aria-label="Agrandir">+</button>
+                    </div>
+                    <div id="simLoading"></div>
                 </div>
                 <div class="form-group">
                     <label>Votre plus belle photo</label>
@@ -186,16 +190,12 @@ fbq('track', 'PageView');
                         <span id="fileNameDisplay" style="font-size: 13px; color: var(--text-sub);">📸 Cliquez ici pour joindre votre image</span>
                         <input type="file" id="clientPhoto" accept="image/*" onchange="revelerEtape3()" required>
                     </div>
-                    <div id="simWrapper">
-                        <div class="sim-hint">✨ Aperçu de votre coque — glissez la photo pour l'ajuster</div>
-                        <div class="sim-canvas-wrap"><canvas id="simCanvas"></canvas></div>
-                        <div class="sim-zoom-row">
-                            <button type="button" id="simZoomOut" aria-label="Réduire">−</button>
-                            <input type="range" id="simZoomSlider" min="100" max="300" value="100">
-                            <button type="button" id="simZoomIn" aria-label="Agrandir">+</button>
-                        </div>
-                        <div id="simLoading"></div>
-                    </div>
+                </div>
+                <div id="summaryBox" style="display: none;">
+                    <p style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: var(--text-sub); letter-spacing: 1.5px;">Estimation de votre commande</p>
+                    <div id="summaryText" style="font-weight: 700; font-size: 17px; margin-top: 8px;"></div>
+                    <div class="price-tag"><span id="totalPrice">0</span> $</div>
+                    <div id="unitInfo" style="font-size: 12px; color: var(--text-sub); margin-top: 4px; font-style: italic;"></div>
                 </div>
             </div>
         </div>
@@ -367,7 +367,7 @@ fbq('track', 'PageView');
 
     function revelerEtape2() {
         const m = document.getElementById('phoneModel').value;
-        if (m) { document.getElementById('step2').classList.add('section-reveal'); mettreAJourPrix(); }
+        if (m) { document.getElementById('step2').classList.add('section-reveal'); initApercuVide(); }
     }
 
     function revelerEtape3() {
@@ -378,6 +378,11 @@ fbq('track', 'PageView');
             document.getElementById('step3').classList.add('section-reveal');
             lancerSimulation(f);
         }
+    }
+
+    function reveleerPrix() {
+        mettreAJourPrix();
+        document.getElementById('summaryBox').style.display = 'block';
     }
 
     // ==========================================================
@@ -438,23 +443,36 @@ fbq('track', 'PageView');
         return { x: minX, y: minY, w: maxX - minX, h: maxY - minY, imgW: w, imgH: h };
     }
 
-    function lancerSimulation(fichierPhoto) {
+    // Appelée dès que le modèle est connu : tente de charger sa coque en aperçu VIDE
+    // (sans photo). Si aucune image n'existe pour ce modèle, on reste discret et le
+    // parcours classique reprend (le prix s'affichera dès la photo ajoutée, sans aperçu).
+    function initApercuVide() {
+        simState.caseImg = null; simState.box = null; simState.photo = null;
+        simState.zoom = 1; simState.offsetX = 0; simState.offsetY = 0;
+        document.getElementById('simWrapper').style.display = 'none';
+        document.getElementById('summaryBox').style.display = 'none';
         const modele = document.getElementById('phoneModel').value;
-        const simWrapper = document.getElementById('simWrapper');
-        const loadingEl = document.getElementById('simLoading');
-        simWrapper.style.display = 'none';
-        if (!modele) return; // essaie pour n'importe quelle marque/modèle — si l'image n'existe pas encore, repli automatique sur l'upload classique
-
+        if (!modele) return;
         const slug = slugModel(modele);
-        const caseUrl = slug + '.png';
+        chargerCoque(slug + '.png', slug);
+    }
 
-        loadingEl.textContent = '';
+    function lancerSimulation(fichierPhoto) {
+        if (!simState.caseImg || !simState.box) {
+            // Pas de coque chargée pour ce modèle (image pas encore fournie) : parcours classique.
+            reveleerPrix();
+            return;
+        }
         const reader = new FileReader();
         reader.onload = (e) => {
             const photoImg = new Image();
             photoImg.onload = () => {
                 simState.photo = photoImg;
-                chargerCoque(caseUrl, slug);
+                simState.zoom = 1; simState.offsetX = 0; simState.offsetY = 0;
+                document.getElementById('simZoomSlider').value = 100;
+                document.getElementById('simHint').textContent = "✨ Ajustez votre photo — glissez pour repositionner";
+                dessinerSim();
+                reveleerPrix();
             };
             photoImg.src = e.target.result;
         };
@@ -468,11 +486,9 @@ fbq('track', 'PageView');
         function afficherAvecBox(img, box) {
             simState.caseImg = img;
             simState.box = box;
-            simState.zoom = 1; simState.offsetX = 0; simState.offsetY = 0;
-            document.getElementById('simZoomSlider').value = 100;
             simWrapper.style.display = 'block';
-            loadingEl.style.color = '';
             loadingEl.textContent = '';
+            document.getElementById('simHint').textContent = "👇 Ajoutez votre photo ci-dessous pour la voir sur la coque";
             dessinerSim();
         }
 
@@ -481,35 +497,21 @@ fbq('track', 'PageView');
             return;
         }
 
-        simWrapper.style.display = 'block';
-        loadingEl.style.color = '';
-        loadingEl.textContent = '⏳ Chargement de l\'aperçu…';
-
         const img = new Image();
         img.onload = () => {
             try {
                 const box = detecterZonePhoto(img);
-                if (!box) {
-                    loadingEl.style.color = '#dc2626';
-                    loadingEl.textContent = "⚠️ Aucune zone transparente détectée dans " + caseUrl + " — vérifie que l'image a un vrai fond transparent (pas blanc plein).";
-                    return;
-                }
+                if (!box) { console.warn('[simulation] Aucune zone transparente détectée dans', caseUrl); return; }
                 simDetectCache[slug] = { img, box };
                 afficherAvecBox(img, box);
             } catch (err) {
-                // Cause la plus fréquente : le site est ouvert en local (double-clic sur le fichier,
-                // adresse qui commence par file://) — le navigateur bloque alors la lecture de l'image
-                // pour raisons de sécurité. Teste depuis l'adresse en ligne (https://...) pour vérifier.
-                loadingEl.style.color = '#dc2626';
-                loadingEl.textContent = "⚠️ Aperçu impossible ici : ouvre le site en ligne (https://...), pas le fichier directement depuis ton dossier. Détail technique : " + err.message;
+                // Cause la plus fréquente en test : ouverture du site en local (file://) plutôt qu'en ligne.
                 console.error('[simulation] Échec de lecture de l\'image', caseUrl, '—', err.message);
             }
         };
         img.onerror = () => {
-            // Le fichier n'existe pas à ce chemin, ou le nom ne correspond pas exactement au modèle.
-            loadingEl.style.color = '#dc2626';
-            loadingEl.textContent = "⚠️ Image introuvable : " + caseUrl + " — vérifie qu'elle est bien déposée à la racine de ton dépôt/hébergement, au même endroit qu'index.html.";
-            console.warn('[simulation] Image introuvable :', caseUrl);
+            // Normal et silencieux : ce modèle n'a simplement pas encore d'image de coque fournie.
+            console.warn('[simulation] Pas de coque pour ce modèle :', caseUrl);
         };
         img.src = caseUrl;
     }
@@ -525,7 +527,7 @@ fbq('track', 'PageView');
 
     function dessinerSim() {
         const box = simState.box, caseImg = simState.caseImg, photo = simState.photo;
-        if (!box || !caseImg || !photo) return;
+        if (!box || !caseImg) return;
         const canvas = document.getElementById('simCanvas');
         const dpr = window.devicePixelRatio || 1;
         const displayW = Math.min(320, window.innerWidth - 60);
@@ -544,13 +546,34 @@ fbq('track', 'PageView');
         ctx.clearRect(0, 0, cssW, cssH);
 
         const holeX = box.x * scale, holeY = box.y * scale, holeW = box.w * scale, holeH = box.h * scale;
+        // Mémorisé pour le glisser-déposer : seul un geste démarré DANS le trou doit capturer le toucher,
+        // pour que le reste du canevas laisse le défilement normal de la page fonctionner.
+        simState.holeRect = { x: holeX, y: holeY, w: holeW, h: holeH };
+
+        if (!photo) {
+            // Aperçu vide : la coque est là, la photo n'est pas encore ajoutée — on invite le client à le faire.
+            ctx.save();
+            ctx.beginPath();
+            ctx.rect(holeX, holeY, holeW, holeH);
+            ctx.clip();
+            ctx.fillStyle = '#f1f5f9';
+            ctx.fillRect(holeX, holeY, holeW, holeH);
+            ctx.fillStyle = '#94a3b8';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = Math.round(holeW * 0.14) + 'px sans-serif';
+            ctx.fillText('📸', holeX + holeW / 2, holeY + holeH / 2 - holeW * 0.06);
+            ctx.font = '600 ' + Math.round(holeW * 0.052) + 'px "Plus Jakarta Sans", sans-serif';
+            ctx.fillText('Votre photo apparaîtra ici', holeX + holeW / 2, holeY + holeH / 2 + holeW * 0.12);
+            ctx.restore();
+            ctx.drawImage(caseImg, 0, 0, cssW, cssH);
+            return;
+        }
+
         const baseScale = Math.max(holeW / photo.width, holeH / photo.height);
         const finalScale = baseScale * simState.zoom;
         const pw = photo.width * finalScale, ph = photo.height * finalScale;
         limiterDecalage(holeW, holeH, pw, ph);
-        // Mémorisé pour le glisser-déposer : seul un geste démarré DANS le trou doit capturer le toucher,
-        // pour que le reste du canevas laisse le défilement normal de la page fonctionner.
-        simState.holeRect = { x: holeX, y: holeY, w: holeW, h: holeH };
 
         ctx.save();
         ctx.beginPath();
